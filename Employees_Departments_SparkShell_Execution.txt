@@ -1,0 +1,403 @@
+
+============================================================
+
+scala> import org.apache.spark.sql.functions._
+
+scala> case class Department(dept_id: Int, dept_name: String, location: String)
+
+scala> case class Employee(
+     |   emp_id: Int,
+     |   name: String,
+     |   dept_id: Int,
+     |   salary: Double,
+     |   hire_date: String,
+     |   manager_id: Option[Int],
+     |   skills_json: String
+     | )
+
+scala> import spark.implicits._
+
+scala> val deptSeq = Seq(
+     |   Department(10, "Engineering", "New York"),
+     |   Department(20, "Sales", "Chicago"),
+     |   Department(30, "HR", "Boston"),
+     |   Department(40, "Marketing", "New York"),
+     |   Department(50, "Finance", "Chicago")
+     | )
+
+scala> val empSeq = Seq(
+     |   Employee(101, "Alice Johnson", 10, 95000.0, "2020-01-15", None, """[{"skill":"Scala","level":"Expert"},{"skill":"Spark","level":"Advanced"}]"""),
+     |   Employee(102, "Bob Smith", 10, 88000.0, "2021-03-20", Some(101), """[{"skill":"Java","level":"Advanced"},{"skill":"Kafka","level":"Intermediate"}]"""),
+     |   Employee(103, "Carol Lee", 20, 72000.0, "2019-07-10", None, """[{"skill":"CRM","level":"Expert"},{"skill":"Negotiation","level":"Advanced"}]"""),
+     |   Employee(104, "David Kim", 20, 68000.0, "2022-02-05", Some(103), """[{"skill":"Excel","level":"Advanced"}]"""),
+     |   Employee(105, "Eva Martinez", 30, 65000.0, "2020-11-12", None, """[{"skill":"Recruiting","level":"Expert"},{"skill":"Payroll","level":"Intermediate"}]"""),
+     |   Employee(106, "Frank Brown", 10, 92000.0, "2018-05-01", Some(101), """[{"skill":"Python","level":"Expert"},{"skill":"Spark","level":"Expert"},{"skill":"Airflow","level":"Advanced"}]"""),
+     |   Employee(107, "Grace Park", 40, 71000.0, "2021-09-18", None, """[{"skill":"SEO","level":"Advanced"},{"skill":"Content","level":"Expert"}]"""),
+     |   Employee(108, "Henry Wilson", 50, 85000.0, "2019-12-01", None, """[{"skill":"Accounting","level":"Expert"},{"skill":"Excel","level":"Expert"}]"""),
+     |   Employee(109, "Ivy Chen", 20, 75000.0, "2023-01-22", Some(103), """[{"skill":"Salesforce","level":"Intermediate"}]"""),
+     |   Employee(110, "Jack Davis", 10, 78000.0, "2022-08-30", Some(101), """[{"skill":"Scala","level":"Intermediate"},{"skill":"SQL","level":"Advanced"}]""")
+     | )
+
+scala> val departments = deptSeq.toDF()
+
+scala> val employees = empSeq.toDF()
+
+scala> departments.createOrReplaceTempView("departments")
+
+scala> employees.createOrReplaceTempView("employees")
+
+scala> println("setup complete – temp views ready")
+
+scala> spark.sql("select * from departments").show()
+
+scala> spark.sql("select emp_id, name, dept_id, salary from employees").show()
+
+============================================================
+2. SPARKSESSION AND EXECUTING SQL
+============================================================
+
+Exercise 2.1 – List employees earning more than 80000.
+scala> spark.sql("""
+     |   select emp_id, name, salary
+     |   from employees
+     |   where salary > 80000
+     |   order by salary desc
+     | """).show()
+
+Exercise 2.2 – Average salary and employee count per department.
+scala> spark.sql("""
+     |   select dept_id,
+     |          round(avg(salary), 2) as avg_salary,
+     |          count(*) as emp_count
+     |   from employees
+     |   group by dept_id
+     |   order by dept_id
+     | """).show()
+
+============================================================
+3. DATABASES, TABLES AND VIEWS
+============================================================
+
+Exercise 3.1 – Create database and switch to it.
+scala> spark.sql("create database if not exists hr_db")
+
+scala> spark.sql("use hr_db")
+
+scala> spark.sql("select current_database()").show()
+
+Exercise 3.2 – Create and query a temporary view.
+scala> spark.sql("""
+     |   create or replace temporary view high_earners as
+     |   select emp_id, name, dept_id, salary
+     |   from employees
+     |   where salary >= 85000
+     | """)
+
+scala> spark.sql("select * from high_earners order by salary desc").show()
+
+Exercise 3.3 – Create and query a global temporary view.
+scala> spark.sql("""
+     |   create or replace global temporary view eng_employees as
+     |   select e.emp_id, e.name, e.salary
+     |   from employees e
+     |   join departments d on e.dept_id = d.dept_id
+     |   where d.dept_name = 'Engineering'
+     | """)
+
+scala> spark.sql("select * from global_temp.eng_employees").show()
+
+============================================================
+4. COMMON TABLE EXPRESSIONS (CTEs)
+============================================================
+
+Exercise 4.1 – Total payroll per department.
+scala> spark.sql("""
+     |   with dept_payroll as (
+     |     select dept_id, sum(salary) as total_payroll
+     |     from employees
+     |     group by dept_id
+     |   )
+     |   select d.dept_name, dp.total_payroll
+     |   from dept_payroll dp
+     |   join departments d on dp.dept_id = d.dept_id
+     |   order by dp.total_payroll desc
+     | """).show()
+
+Exercise 4.2 – Employees earning above company average.
+scala> spark.sql("""
+     |   with company_avg as (
+     |     select avg(salary) as avg_sal
+     |     from employees
+     |   ),
+     |   above_avg as (
+     |     select e.emp_id, e.name, e.salary, c.avg_sal
+     |     from employees e
+     |     cross join company_avg c
+     |     where e.salary > c.avg_sal
+     |   )
+     |   select name, salary,
+     |          round(salary - avg_sal, 2) as above_by
+     |   from above_avg
+     |   order by above_by desc
+     | """).show()
+
+============================================================
+5. JOINS – INNER, LEFT, FULL OUTER AND SELF JOIN
+============================================================
+
+Exercise 5.1 – Employee details with department name and location.
+scala> spark.sql("""
+     |   select e.emp_id, e.name, e.salary, d.dept_name, d.location
+     |   from employees e
+     |   inner join departments d on e.dept_id = d.dept_id
+     |   order by d.dept_name, e.name
+     | """).show()
+
+Exercise 5.2 – All departments, including departments without employees.
+scala> spark.sql("""
+     |   select d.dept_id, d.dept_name, e.emp_id, e.name
+     |   from departments d
+     |   left join employees e on d.dept_id = e.dept_id
+     |   order by d.dept_id, e.emp_id
+     | """).show()
+
+Exercise 5.3 – Full outer join with an inline bonus-eligible set.
+scala> spark.sql("""
+     |   with bonus_eligible as (
+     |     select 101 as emp_id, 'Y' as bonus_flag union all
+     |     select 103, 'Y' union all
+     |     select 108, 'Y' union all
+     |     select 999, 'Y'
+     |   )
+     |   select coalesce(e.emp_id, b.emp_id) as emp_id,
+     |          e.name,
+     |          b.bonus_flag
+     |   from employees e
+     |   full outer join bonus_eligible b on e.emp_id = b.emp_id
+     |   order by emp_id
+     | """).show()
+
+Exercise 5.4 – Employee and manager names using self join.
+scala> spark.sql("""
+     |   select e.emp_id,
+     |          e.name as employee,
+     |          m.name as manager
+     |   from employees e
+     |   left join employees m on e.manager_id = m.emp_id
+     |   order by e.emp_id
+     | """).show()
+
+============================================================
+6. WINDOW FUNCTIONS
+============================================================
+
+Exercise 6.1 – row_number, rank and dense_rank within each department.
+scala> spark.sql("""
+     |   select name, dept_id, salary,
+     |          row_number() over (partition by dept_id order by salary desc) as rn,
+     |          rank() over (partition by dept_id order by salary desc) as rnk,
+     |          dense_rank() over (partition by dept_id order by salary desc) as drnk
+     |   from employees
+     |   order by dept_id, salary desc
+     | """).show()
+
+Exercise 6.2 – Previous and next salary using lag and lead.
+scala> spark.sql("""
+     |   select dept_id, name, hire_date, salary,
+     |          lag(salary) over (partition by dept_id order by hire_date) as prev_salary,
+     |          lead(salary) over (partition by dept_id order by hire_date) as next_salary
+     |   from employees
+     |   order by dept_id, hire_date
+     | """).show()
+
+Exercise 6.3 – Running total of salary within each department.
+scala> spark.sql("""
+     |   select dept_id, name, hire_date, salary,
+     |          sum(salary) over (
+     |            partition by dept_id
+     |            order by hire_date
+     |            rows between unbounded preceding and current row
+     |          ) as running_salary
+     |   from employees
+     |   order by dept_id, hire_date
+     | """).show()
+
+============================================================
+7. ARRAY / HIGHER-ORDER FUNCTIONS
+============================================================
+
+Prerequisite – Parse skills_json into an array of structs.
+scala> spark.sql("""
+     |   create or replace temporary view emp_skills as
+     |   select emp_id, name, dept_id, salary,
+     |          from_json(skills_json, 'array<struct<skill:string,level:string>>') as skills
+     |   from employees
+     | """)
+
+scala> spark.sql("select emp_id, name, skills from emp_skills").show(false)
+
+Exercise 7.1 – transform: return skill names only.
+scala> spark.sql("""
+     |   select emp_id, name,
+     |          transform(skills, x -> x.skill) as skill_names
+     |   from emp_skills
+     | """).show(false)
+
+Exercise 7.2 – filter: keep only Expert skills.
+scala> spark.sql("""
+     |   select emp_id, name,
+     |          filter(skills, x -> x.level = 'Expert') as expert_skills
+     |   from emp_skills
+     | """).show(false)
+
+Exercise 7.3 – aggregate: count skills per employee.
+scala> spark.sql("""
+     |   select emp_id, name,
+     |          aggregate(skills, 0, (acc, x) -> acc + 1) as skill_count
+     |   from emp_skills
+     |   order by skill_count desc
+     | """).show()
+
+============================================================
+8. NESTED JSON – FROM_JSON, STRUCTS AND EXPLODE
+============================================================
+
+Exercise 8.1 – Explode skills into separate rows and join departments.
+scala> spark.sql("""
+     |   select e.name,
+     |          d.dept_name,
+     |          s.skill,
+     |          s.level
+     |   from employees e
+     |   join departments d on e.dept_id = d.dept_id
+     |   lateral view explode(
+     |     from_json(e.skills_json, 'array<struct<skill:string,level:string>>')
+     |   ) t as s
+     |   order by e.name, s.skill
+     | """).show()
+
+Exercise 8.2 – Create a nested employee_info struct.
+scala> spark.sql("""
+     |   select d.dept_name,
+     |          named_struct('name', e.name, 'salary', e.salary) as employee_info
+     |   from departments d
+     |   join employees e on d.dept_id = e.dept_id
+     |   where e.emp_id in (101, 103, 105, 107, 108)
+     |   order by d.dept_name
+     | """).show(false)
+
+============================================================
+9. SQL VS DATAFRAME API
+============================================================
+
+Business problem – Find the highest-paid employee in each department.
+
+Solution A – Pure Spark SQL.
+scala> spark.sql("""
+     |   with ranked as (
+     |     select e.name, e.salary, d.dept_name,
+     |            row_number() over (
+     |              partition by e.dept_id
+     |              order by e.salary desc
+     |            ) as rn
+     |     from employees e
+     |     join departments d on e.dept_id = d.dept_id
+     |   )
+     |   select dept_name, name as top_employee, salary
+     |   from ranked
+     |   where rn = 1
+     |   order by dept_name
+     | """).show()
+
+Solution B – DataFrame API (included for comparison).
+scala> import org.apache.spark.sql.expressions.Window
+
+scala> val w = Window.partitionBy("dept_id").orderBy(col("salary").desc)
+
+scala> val result = employees
+     |   .withColumn("rn", row_number().over(w))
+     |   .filter(col("rn") === 1)
+     |   .join(departments, "dept_id")
+     |   .select(
+     |     col("dept_name"),
+     |     col("name").as("top_employee"),
+     |     col("salary")
+     |   )
+     |   .orderBy("dept_name")
+
+scala> result.show()
+
+============================================================
+10. COMBINED CHALLENGE EXERCISES
+============================================================
+
+Challenge 10.1 – Highest-paid employee in each location.
+scala> spark.sql("""
+     |   with ranked as (
+     |     select d.location, e.name, e.salary,
+     |            row_number() over (
+     |              partition by d.location
+     |              order by e.salary desc
+     |            ) as rn
+     |     from employees e
+     |     join departments d on e.dept_id = d.dept_id
+     |   )
+     |   select location, name, salary
+     |   from ranked
+     |   where rn = 1
+     |   order by location
+     | """).show()
+
+Challenge 10.2 – Skill count, whether employee has Spark, and skill names.
+scala> spark.sql("""
+     |   select emp_id, name,
+     |          size(skills) as skill_count,
+     |          exists(skills, x -> x.skill = 'Spark') as has_spark,
+     |          transform(skills, x -> x.skill) as skill_names
+     |   from emp_skills
+     |   order by skill_count desc
+     | """).show(false)
+
+Challenge 10.3 – Employee and manager salary gap.
+scala> spark.sql("""
+     |   select e.name as employee,
+     |          m.name as manager,
+     |          e.salary as emp_salary,
+     |          m.salary as mgr_salary,
+     |          round(m.salary - e.salary, 2) as gap
+     |   from employees e
+     |   join employees m on e.manager_id = m.emp_id
+     |   order by gap desc
+     | """).show()
+
+Challenge 10.4 – Exploded skills with running skill count per department.
+scala> spark.sql("""
+     |   with exploded as (
+     |     select d.dept_name, e.name, s.skill, s.level
+     |     from employees e
+     |     join departments d on e.dept_id = d.dept_id
+     |     lateral view explode(
+     |       from_json(e.skills_json, 'array<struct<skill:string,level:string>>')
+     |     ) t as s
+     |   )
+     |   select dept_name, name, skill, level,
+     |          count(*) over (
+     |            partition by dept_name
+     |            order by name, skill
+     |            rows between unbounded preceding and current row
+     |          ) as running_skill_rows
+     |   from exploded
+     |   order by dept_name, name, skill
+     | """).show()
+
+============================================================
+END OF SPARK-SHELL EXERCISES
+============================================================
+
+NOTES:
+- Run the setup section only once per Spark Shell session.
+- Temporary views are available only in the current Spark session.
+- The global temporary view is queried using global_temp.eng_employees.
+- Use show(false) to avoid truncating array and struct values.
+- The DataFrame API section is intentionally included because the workbook asks for a SQL-vs-DataFrame comparison.
+- No external JSON file is required; skills_json is stored in the sample Employee records.
