@@ -1,4 +1,4 @@
-package com.example
+gpackage com.example
 
 import org.apache.spark.sql.{DataFrame, Dataset, SparkSession}
 import org.apache.spark.sql.functions._
