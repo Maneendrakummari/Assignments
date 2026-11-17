@@ -1,0 +1,30 @@
+10:52:36.211 [main] WARN  org.apache.spark.sql.execution.streaming.ResolveWriteToStream - spark.sql.adaptive.enabled is not supported in streaming DataFrames/Datasets and will be disabled.
+10:52:37.635 [main] WARN  org.apache.spark.sql.execution.streaming.ResolveWriteToStream - spark.sql.adaptive.enabled is not supported in streaming DataFrames/Datasets and will be disabled.
+10:52:38.800 [stream execution thread for [id = d103cefd-e0b1-402a-ac1e-617d2519a4cc, runId = 9d012d77-3458-43a3-851f-7090125f00c0]] WARN  org.apache.kafka.clients.admin.AdminClientConfig - These configurations '[key.deserializer, value.deserializer, enable.auto.commit, max.poll.records, auto.offset.reset]' were supplied but are not used yet.
+10:52:38.913 [stream execution thread for [id = 48b77e7c-8976-476e-abbd-954236e6af07, runId = 0a666af9-e7bc-4a14-bb2b-4bcf7749a9d5]] WARN  org.apache.kafka.clients.admin.AdminClientConfig - These configurations '[key.deserializer, value.deserializer, enable.auto.commit, max.poll.records, auto.offset.reset]' were supplied but are not used yet.
+10:52:39.071 [main] WARN  org.apache.spark.sql.execution.streaming.ResolveWriteToStream - spark.sql.adaptive.enabled is not supported in streaming DataFrames/Datasets and will be disabled.
+10:52:40.375 [stream execution thread for [id = aeebab78-4429-49e9-9139-9e5b64defadb, runId = 5668a894-36bd-4872-9912-a4718f823823]] WARN  org.apache.kafka.clients.admin.AdminClientConfig - These configurations '[key.deserializer, value.deserializer, enable.auto.commit, max.poll.records, auto.offset.reset]' were supplied but are not used yet.
+-------------------------------------------
+Batch: 0
+-------------------------------------------
++------------------------------------------+------+-----+-----+--------+-------------------+
+|window                                    |postId|views|likes|comments|connection_requests|
++------------------------------------------+------+-----+-----+--------+-------------------+
+|{2026-11-17 15:31:00, 2026-11-17 15:32:00}|p1001 |2    |2    |2       |0                  |
+|{2026-11-17 15:32:00, 2026-11-17 15:33:00}|p1002 |0    |0    |1       |0                  |
+|{2026-11-17 15:30:00, 2026-11-17 15:31:00}|p1002 |2    |2    |0       |0                  |
+|{2026-11-17 15:30:00, 2026-11-17 15:31:00}|p1001 |4    |2    |2       |0                  |
+|{2026-11-17 15:32:00, 2026-11-17 15:33:00}|p1001 |1    |1    |0       |0                  |
+|{2026-11-17 15:31:00, 2026-11-17 15:32:00}|p1002 |0    |0    |0       |2                  |
++------------------------------------------+------+-----+-----+--------+-------------------+
+
+-------------------------------------------
+Batch: 0
+-------------------------------------------
++------+-----+-----+--------+-------------------+
+|postId|views|likes|comments|connection_requests|
++------+-----+-----+--------+-------------------+
+|p1001 |7    |5    |4       |0                  |
+|p1002 |2    |2    |1       |2                  |
++------+-----+-----+--------+-------------------+
+
