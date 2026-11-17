@@ -1,0 +1,270 @@
+PS C:\Users\manee\capstone-streaming> docker compose -f docker/docker-compose.yml up -d
+[+] up 5/7
+ ✔ Image g... Pulled                                                                                                           974.6s
+ ✔ Volume ... Created                                                                                                            0.0s
+ ✔ Network... Created                                                                                                            0.1s
+ - Contain... Creating                                                                                                           0.1s
+ ✘ service... Error response from daemon: Conflict. The container name "/kafka" is already in use by container "10a63faa7d3bee09e23b69faf705144a365533a4648623cefd46de433b167643". You have to remove (or rename) that container to be able to reuse that name.   0.0s
+ - Contain... Creating                                                                                                           0.0s
+Error response from daemon: Conflict. The container name "/kafka" is already in use by container "10a63faa7d3bee09e23b69faf705144a365533a4648623cefd46de433b167643". You have to remove (or rename) that container to be able to reuse that name.
+
+What's next:
+    Debug this Compose error with Gordon → docker ai "help me fix this compose error"
+PS C:\Users\manee\capstone-streaming> docker ps -a
+CONTAINER ID   IMAGE                                  COMMAND                  CREATED        STATUS                      PORTS                                         NAMES
+3023b9da95f1   provectuslabs/kafka-ui:latest          "/bin/sh -c 'java --…"   23 hours ago   Up 19 minutes               0.0.0.0:8088->8080/tcp, [::]:8088->8080/tcp   kafka-ui
+10a63faa7d3b   apache/kafka:3.7.0                     "/__cacert_entrypoin…"   23 hours ago   Up 19 minutes               0.0.0.0:9092->9092/tcp, [::]:9092->9092/tcp   kafka
+7079bca281bb   airflow-databricks-airflow-webserver   "/usr/bin/dumb-init …"   2 months ago   Exited (255) 2 months ago   0.0.0.0:8080->8080/tcp                        airflow-databricks-airflow-webserver-1
+0ea46b9c1c43   airflow-databricks-airflow-scheduler   "/usr/bin/dumb-init …"   2 months ago   Exited (255) 2 months ago   8080/tcp                                      airflow-databricks-airflow-scheduler-1
+77974783acde   airflow-databricks-airflow-init        "/usr/bin/dumb-init …"   2 months ago   Exited (0) 2 months ago                                                   airflow-databricks-airflow-init-1
+0c5436acace8   postgres:15                            "docker-entrypoint.s…"   2 months ago   Exited (255) 2 months ago   5432/tcp                                      airflow-databricks-postgres-1
+d37badf4540e   hello-world                            "/hello"                 2 months ago   Exited (0) 2 months ago                                                   nifty_cray
+PS C:\Users\manee\capstone-streaming> docker rm -f kafka kafka-ui
+kafka
+kafka-ui
+PS C:\Users\manee\capstone-streaming> docker compose -f docker/docker-compose.yml up -d
+[+] up 2/2
+ ✔ Container kafka    Started                                                                                                    0.9s
+ ✔ Container kafka-ui Started                                                                                                    1.2s
+PS C:\Users\manee\capstone-streaming> docker ps
+CONTAINER ID   IMAGE                                                       COMMAND                  CREATED          STATUS          PORTS                                         NAMES
+ee15ca0d9f0c   provectuslabs/kafka-ui:latest                               "/bin/sh -c 'java --…"   11 seconds ago   Up 10 seconds   0.0.0.0:8088->8080/tcp, [::]:8088->8080/tcp   kafka-ui
+73a64d2178af   ghcr.io/element-hq/bitnamilegacy/kafka:3.7.1-debian-12-r4   "/opt/bitnami/script…"   11 seconds ago   Up 11 seconds   0.0.0.0:9092->9094/tcp, [::]:9092->9094/tcp   kafka
+PS C:\Users\manee\capstone-streaming> docker exec -it kafka /opt/bitnami/kafka/bin/kafka-topics.sh --bootstrap-server localhost:9092 --create --topic linkedin-events --partitions 3 --replication-factor 1
+Created topic linkedin-events.
+
+What's next:
+    Try Docker Debug for seamless, persistent debugging tools in any container or image → docker debug kafka
+    Learn more at https://docs.docker.com/go/debug-cli/
+PS C:\Users\manee\capstone-streaming> docker exec -it kafka /opt/bitnami/kafka/bin/kafka-topics.sh --bootstrap-server localhost:9092 --list
+linkedin-events
+
+What's next:
+    Try Docker Debug for seamless, persistent debugging tools in any container or image → docker debug kafka
+    Learn more at https://docs.docker.com/go/debug-cli/
+PS C:\Users\manee\capstone-streaming> docker exec -it kafka /opt/bitnami/kafka/bin/kafka-topics.sh --bootstrap-server localhost:9092 --describe --topic linkedin-events
+Topic: linkedin-events  TopicId: iOkZ-zYERKGqi6Q3GFy0NA PartitionCount: 3       ReplicationFactor: 1    Configs:
+        Topic: linkedin-events  Partition: 0    Leader: 1       Replicas: 1     Isr: 1
+        Topic: linkedin-events  Partition: 1    Leader: 1       Replicas: 1     Isr: 1
+        Topic: linkedin-events  Partition: 2    Leader: 1       Replicas: 1     Isr: 1
+
+What's next:
+    Try Docker Debug for seamless, persistent debugging tools in any container or image → docker debug kafka
+    Learn more at https://docs.docker.com/go/debug-cli/
+PS C:\Users\manee\capstone-streaming>
+
+
+PS C:\Users\manee\capstone-streaming> spark-submit --master "local[*]" --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.0 --class com.LinkedinStreaming "C:\Users\manee\OneDrive\Documents\scala-intllij\capstone-linkedin-streaming\target\scala-2.12\capstone-linkedin-streaming_2.12-0.1.0-SNAPSHOT.jar"
+:: loading settings :: url = jar:file:/C:/spark/spark-3.5.0-bin-hadoop3/jars/ivy-2.5.1.jar!/org/apache/ivy/core/settings/ivysettings.xml
+Ivy Default Cache set to: C:\Users\manee\.ivy2\cache
+The jars for the packages stored in: C:\Users\manee\.ivy2\jars
+org.apache.spark#spark-sql-kafka-0-10_2.12 added as a dependency
+:: resolving dependencies :: org.apache.spark#spark-submit-parent-0914733c-dcfc-456d-82b1-abb493e64f1a;1.0
+        confs: [default]
+        found org.apache.spark#spark-sql-kafka-0-10_2.12;3.5.0 in central
+        found org.apache.spark#spark-token-provider-kafka-0-10_2.12;3.5.0 in central
+        found org.apache.kafka#kafka-clients;3.4.1 in central
+        found org.lz4#lz4-java;1.8.0 in central
+        found org.xerial.snappy#snappy-java;1.1.10.3 in central
+        found org.slf4j#slf4j-api;2.0.7 in central
+        found org.apache.hadoop#hadoop-client-runtime;3.3.4 in central
+        found org.apache.hadoop#hadoop-client-api;3.3.4 in central
+        found commons-logging#commons-logging;1.1.3 in central
+        found com.google.code.findbugs#jsr305;3.0.0 in central
+        found org.apache.commons#commons-pool2;2.11.1 in central
+:: resolution report :: resolve 946ms :: artifacts dl 46ms
+        :: modules in use:
+        com.google.code.findbugs#jsr305;3.0.0 from central in [default]
+        commons-logging#commons-logging;1.1.3 from central in [default]
+        org.apache.commons#commons-pool2;2.11.1 from central in [default]
+        org.apache.hadoop#hadoop-client-api;3.3.4 from central in [default]
+        org.apache.hadoop#hadoop-client-runtime;3.3.4 from central in [default]
+        org.apache.kafka#kafka-clients;3.4.1 from central in [default]
+        org.apache.spark#spark-sql-kafka-0-10_2.12;3.5.0 from central in [default]
+        org.apache.spark#spark-token-provider-kafka-0-10_2.12;3.5.0 from central in [default]
+        org.lz4#lz4-java;1.8.0 from central in [default]
+        org.slf4j#slf4j-api;2.0.7 from central in [default]
+        org.xerial.snappy#snappy-java;1.1.10.3 from central in [default]
+        ---------------------------------------------------------------------
+        |                  |            modules            ||   artifacts   |
+        |       conf       | number| search|dwnlded|evicted|| number|dwnlded|
+        ---------------------------------------------------------------------
+        |      default     |   11  |   0   |   0   |   0   ||   11  |   0   |
+        ---------------------------------------------------------------------
+:: retrieving :: org.apache.spark#spark-submit-parent-0914733c-dcfc-456d-82b1-abb493e64f1a
+        confs: [default]
+        0 artifacts copied, 11 already retrieved (0kB/21ms)
+26/11/17 10:41:47 INFO SparkContext: Running Spark version 3.5.0
+26/11/17 10:41:47 INFO SparkContext: OS info Windows 11, 10.0, amd64
+26/11/17 10:41:47 INFO SparkContext: Java version 17.0.21
+26/11/17 10:41:47 INFO ResourceUtils: ==============================================================
+26/11/17 10:41:47 INFO ResourceUtils: No custom resources configured for spark.driver.
+26/11/17 10:41:47 INFO ResourceUtils: ==============================================================
+26/11/17 10:41:47 INFO SparkContext: Submitted application: LinkedIn Kafka Spark Streaming
+26/11/17 10:41:47 INFO ResourceProfile: Default ResourceProfile created, executor resources: Map(cores -> name: cores, amount: 1, script: , vendor: , memory -> name: memory, amount: 1024, script: , vendor: , offHeap -> name: offHeap, amount: 0, script: , vendor: ), task resources: Map(cpus -> name: cpus, amount: 1.0)
+26/11/17 10:41:47 INFO ResourceProfile: Limiting resource is cpu
+26/11/17 10:41:47 INFO ResourceProfileManager: Added ResourceProfile id: 0
+26/11/17 10:41:47 INFO SecurityManager: Changing view acls to: manee
+26/11/17 10:41:47 INFO SecurityManager: Changing modify acls to: manee
+26/11/17 10:41:47 INFO SecurityManager: Changing view acls groups to:
+26/11/17 10:41:47 INFO SecurityManager: Changing modify acls groups to:
+26/11/17 10:41:47 INFO SecurityManager: SecurityManager: authentication disabled; ui acls disabled; users with view permissions: manee; groups with view permissions: EMPTY; users with modify permissions: manee; groups with modify permissions: EMPTY
+26/11/17 10:41:48 INFO Utils: Successfully started service 'sparkDriver' on port 55891.
+26/11/17 10:41:48 INFO SparkEnv: Registering MapOutputTracker
+26/11/17 10:41:48 INFO SparkEnv: Registering BlockManagerMaster
+26/11/17 10:41:48 INFO BlockManagerMasterEndpoint: Using org.apache.spark.storage.DefaultTopologyMapper for getting topology information
+26/11/17 10:41:48 INFO BlockManagerMasterEndpoint: BlockManagerMasterEndpoint up
+26/11/17 10:41:48 INFO SparkEnv: Registering BlockManagerMasterHeartbeat
+26/11/17 10:41:48 INFO DiskBlockManager: Created local directory at C:\Users\manee\AppData\Local\Temp\blockmgr-032cf1ad-70af-4a97-9057-5f06c151282c
+26/11/17 10:41:48 INFO MemoryStore: MemoryStore started with capacity 434.4 MiB
+26/11/17 10:41:48 INFO SparkEnv: Registering OutputCommitCoordinator
+26/11/17 10:41:49 INFO JettyUtils: Start Jetty 0.0.0.0:4040 for SparkUI
+26/11/17 10:41:49 INFO Utils: Successfully started service 'SparkUI' on port 4040.
+26/11/17 10:41:49 INFO SparkContext: Added JAR file:///C:/Users/manee/.ivy2/jars/org.apache.spark_spark-sql-kafka-0-10_2.12-3.5.0.jar at spark://Maneendra:55891/jars/org.apache.spark_spark-sql-kafka-0-10_2.12-3.5.0.jar with timestamp 1794892307404
+26/11/17 10:41:49 INFO SparkContext: Added JAR file:///C:/Users/manee/.ivy2/jars/org.apache.spark_spark-token-provider-kafka-0-10_2.12-3.5.0.jar at spark://Maneendra:55891/jars/org.apache.spark_spark-token-provider-kafka-0-10_2.12-3.5.0.jar with timestamp 1794892307404
+26/11/17 10:41:49 INFO SparkContext: Added JAR file:///C:/Users/manee/.ivy2/jars/org.apache.kafka_kafka-clients-3.4.1.jar at spark://Maneendra:55891/jars/org.apache.kafka_kafka-clients-3.4.1.jar with timestamp 1794892307404
+26/11/17 10:41:49 INFO SparkContext: Added JAR file:///C:/Users/manee/.ivy2/jars/com.google.code.findbugs_jsr305-3.0.0.jar at spark://Maneendra:55891/jars/com.google.code.findbugs_jsr305-3.0.0.jar with timestamp 1794892307404
+26/11/17 10:41:49 INFO SparkContext: Added JAR file:///C:/Users/manee/.ivy2/jars/org.apache.commons_commons-pool2-2.11.1.jar at spark://Maneendra:55891/jars/org.apache.commons_commons-pool2-2.11.1.jar with timestamp 1794892307404
+26/11/17 10:41:49 INFO SparkContext: Added JAR file:///C:/Users/manee/.ivy2/jars/org.apache.hadoop_hadoop-client-runtime-3.3.4.jar at spark://Maneendra:55891/jars/org.apache.hadoop_hadoop-client-runtime-3.3.4.jar with timestamp 1794892307404
+26/11/17 10:41:49 INFO SparkContext: Added JAR file:///C:/Users/manee/.ivy2/jars/org.lz4_lz4-java-1.8.0.jar at spark://Maneendra:55891/jars/org.lz4_lz4-java-1.8.0.jar with timestamp 1794892307404
+26/11/17 10:41:49 INFO SparkContext: Added JAR file:///C:/Users/manee/.ivy2/jars/org.xerial.snappy_snappy-java-1.1.10.3.jar at spark://Maneendra:55891/jars/org.xerial.snappy_snappy-java-1.1.10.3.jar with timestamp 1794892307404
+26/11/17 10:41:49 INFO SparkContext: Added JAR file:///C:/Users/manee/.ivy2/jars/org.slf4j_slf4j-api-2.0.7.jar at spark://Maneendra:55891/jars/org.slf4j_slf4j-api-2.0.7.jar with timestamp 1794892307404
+26/11/17 10:41:49 INFO SparkContext: Added JAR file:///C:/Users/manee/.ivy2/jars/org.apache.hadoop_hadoop-client-api-3.3.4.jar at spark://Maneendra:55891/jars/org.apache.hadoop_hadoop-client-api-3.3.4.jar with timestamp 1794892307404
+26/11/17 10:41:49 INFO SparkContext: Added JAR file:///C:/Users/manee/.ivy2/jars/commons-logging_commons-logging-1.1.3.jar at spark://Maneendra:55891/jars/commons-logging_commons-logging-1.1.3.jar with timestamp 1794892307404
+26/11/17 10:41:49 INFO SparkContext: Added JAR file:/C:/Users/manee/OneDrive/Documents/scala-intllij/capstone-linkedin-streaming/target/scala-2.12/capstone-linkedin-streaming_2.12-0.1.0-SNAPSHOT.jar at spark://Maneendra:55891/jars/capstone-linkedin-streaming_2.12-0.1.0-SNAPSHOT.jar with timestamp 1794892307404
+26/11/17 10:41:49 INFO Executor: Starting executor ID driver on host Maneendra
+26/11/17 10:41:49 INFO Executor: OS info Windows 11, 10.0, amd64
+26/11/17 10:41:49 INFO Executor: Java version 17.0.21
+26/11/17 10:41:49 INFO Executor: Starting executor with user classpath (userClassPathFirst = false): ''
+26/11/17 10:41:49 INFO Executor: Created or updated repl class loader org.apache.spark.util.MutableURLClassLoader@4a864d4d for default.
+26/11/17 10:41:49 INFO Executor: Fetching spark://Maneendra:55891/jars/org.apache.spark_spark-token-provider-kafka-0-10_2.12-3.5.0.jar with timestamp 1794892307404
+26/11/17 10:41:49 INFO TransportClientFactory: Successfully created connection to Maneendra/10.130.81.101:55891 after 69 ms (0 ms spent in bootstraps)
+26/11/17 10:41:49 INFO Utils: Fetching spark://Maneendra:55891/jars/org.apache.spark_spark-token-provider-kafka-0-10_2.12-3.5.0.jar to C:\Users\manee\AppData\Local\Temp\spark-f7fcdf5d-80c3-4020-ac99-5777ca38df46\userFiles-d05ed8b2-c0b9-46ec-bd95-87c39e89d259\fetchFileTemp13428975329559339574.tmp
+26/11/17 10:41:49 INFO Executor: Adding file:/C:/Users/manee/AppData/Local/Temp/spark-f7fcdf5d-80c3-4020-ac99-5777ca38df46/userFiles-d05ed8b2-c0b9-46ec-bd95-87c39e89d259/org.apache.spark_spark-token-provider-kafka-0-10_2.12-3.5.0.jar to class loader default
+26/11/17 10:41:49 INFO Executor: Fetching spark://Maneendra:55891/jars/org.apache.hadoop_hadoop-client-runtime-3.3.4.jar with timestamp 1794892307404
+26/11/17 10:41:49 INFO Utils: Fetching spark://Maneendra:55891/jars/org.apache.hadoop_hadoop-client-runtime-3.3.4.jar to C:\Users\manee\AppData\Local\Temp\spark-f7fcdf5d-80c3-4020-ac99-5777ca38df46\userFiles-d05ed8b2-c0b9-46ec-bd95-87c39e89d259\fetchFileTemp17104674257507551983.tmp
+26/11/17 10:41:50 INFO Executor: Adding file:/C:/Users/manee/AppData/Local/Temp/spark-f7fcdf5d-80c3-4020-ac99-5777ca38df46/userFiles-d05ed8b2-c0b9-46ec-bd95-87c39e89d259/org.apache.hadoop_hadoop-client-runtime-3.3.4.jar to class loader default
+26/11/17 10:41:50 INFO Executor: Fetching spark://Maneendra:55891/jars/org.lz4_lz4-java-1.8.0.jar with timestamp 1794892307404
+26/11/17 10:41:50 INFO Utils: Fetching spark://Maneendra:55891/jars/org.lz4_lz4-java-1.8.0.jar to C:\Users\manee\AppData\Local\Temp\spark-f7fcdf5d-80c3-4020-ac99-5777ca38df46\userFiles-d05ed8b2-c0b9-46ec-bd95-87c39e89d259\fetchFileTemp13313590698476597008.tmp
+26/11/17 10:41:50 INFO Executor: Adding file:/C:/Users/manee/AppData/Local/Temp/spark-f7fcdf5d-80c3-4020-ac99-5777ca38df46/userFiles-d05ed8b2-c0b9-46ec-bd95-87c39e89d259/org.lz4_lz4-java-1.8.0.jar to class loader default
+26/11/17 10:41:50 INFO Executor: Fetching spark://Maneendra:55891/jars/capstone-linkedin-streaming_2.12-0.1.0-SNAPSHOT.jar with timestamp 1794892307404
+26/11/17 10:41:50 INFO Utils: Fetching spark://Maneendra:55891/jars/capstone-linkedin-streaming_2.12-0.1.0-SNAPSHOT.jar to C:\Users\manee\AppData\Local\Temp\spark-f7fcdf5d-80c3-4020-ac99-5777ca38df46\userFiles-d05ed8b2-c0b9-46ec-bd95-87c39e89d259\fetchFileTemp10071415523990559614.tmp
+26/11/17 10:41:50 INFO Executor: Adding file:/C:/Users/manee/AppData/Local/Temp/spark-f7fcdf5d-80c3-4020-ac99-5777ca38df46/userFiles-d05ed8b2-c0b9-46ec-bd95-87c39e89d259/capstone-linkedin-streaming_2.12-0.1.0-SNAPSHOT.jar to class loader default
+26/11/17 10:41:50 INFO Executor: Fetching spark://Maneendra:55891/jars/org.xerial.snappy_snappy-java-1.1.10.3.jar with timestamp 1794892307404
+26/11/17 10:41:50 INFO Utils: Fetching spark://Maneendra:55891/jars/org.xerial.snappy_snappy-java-1.1.10.3.jar to C:\Users\manee\AppData\Local\Temp\spark-f7fcdf5d-80c3-4020-ac99-5777ca38df46\userFiles-d05ed8b2-c0b9-46ec-bd95-87c39e89d259\fetchFileTemp17458912080137036533.tmp
+26/11/17 10:41:50 INFO Executor: Adding file:/C:/Users/manee/AppData/Local/Temp/spark-f7fcdf5d-80c3-4020-ac99-5777ca38df46/userFiles-d05ed8b2-c0b9-46ec-bd95-87c39e89d259/org.xerial.snappy_snappy-java-1.1.10.3.jar to class loader default
+26/11/17 10:41:50 INFO Executor: Fetching spark://Maneendra:55891/jars/org.apache.kafka_kafka-clients-3.4.1.jar with timestamp 1794892307404
+26/11/17 10:41:50 INFO Utils: Fetching spark://Maneendra:55891/jars/org.apache.kafka_kafka-clients-3.4.1.jar to C:\Users\manee\AppData\Local\Temp\spark-f7fcdf5d-80c3-4020-ac99-5777ca38df46\userFiles-d05ed8b2-c0b9-46ec-bd95-87c39e89d259\fetchFileTemp12247981818090087922.tmp
+26/11/17 10:41:51 INFO Executor: Adding file:/C:/Users/manee/AppData/Local/Temp/spark-f7fcdf5d-80c3-4020-ac99-5777ca38df46/userFiles-d05ed8b2-c0b9-46ec-bd95-87c39e89d259/org.apache.kafka_kafka-clients-3.4.1.jar to class loader default
+26/11/17 10:41:51 INFO Executor: Fetching spark://Maneendra:55891/jars/org.apache.hadoop_hadoop-client-api-3.3.4.jar with timestamp 1794892307404
+26/11/17 10:41:51 INFO Utils: Fetching spark://Maneendra:55891/jars/org.apache.hadoop_hadoop-client-api-3.3.4.jar to C:\Users\manee\AppData\Local\Temp\spark-f7fcdf5d-80c3-4020-ac99-5777ca38df46\userFiles-d05ed8b2-c0b9-46ec-bd95-87c39e89d259\fetchFileTemp12898629639924821841.tmp
+26/11/17 10:41:51 INFO Executor: Adding file:/C:/Users/manee/AppData/Local/Temp/spark-f7fcdf5d-80c3-4020-ac99-5777ca38df46/userFiles-d05ed8b2-c0b9-46ec-bd95-87c39e89d259/org.apache.hadoop_hadoop-client-api-3.3.4.jar to class loader default
+26/11/17 10:41:51 INFO Executor: Fetching spark://Maneendra:55891/jars/org.apache.commons_commons-pool2-2.11.1.jar with timestamp 1794892307404
+26/11/17 10:41:51 INFO Utils: Fetching spark://Maneendra:55891/jars/org.apache.commons_commons-pool2-2.11.1.jar to C:\Users\manee\AppData\Local\Temp\spark-f7fcdf5d-80c3-4020-ac99-5777ca38df46\userFiles-d05ed8b2-c0b9-46ec-bd95-87c39e89d259\fetchFileTemp1358807351988038004.tmp
+26/11/17 10:41:51 INFO Executor: Adding file:/C:/Users/manee/AppData/Local/Temp/spark-f7fcdf5d-80c3-4020-ac99-5777ca38df46/userFiles-d05ed8b2-c0b9-46ec-bd95-87c39e89d259/org.apache.commons_commons-pool2-2.11.1.jar to class loader default
+26/11/17 10:41:51 INFO Executor: Fetching spark://Maneendra:55891/jars/org.apache.spark_spark-sql-kafka-0-10_2.12-3.5.0.jar with timestamp 1794892307404
+26/11/17 10:41:51 INFO Utils: Fetching spark://Maneendra:55891/jars/org.apache.spark_spark-sql-kafka-0-10_2.12-3.5.0.jar to C:\Users\manee\AppData\Local\Temp\spark-f7fcdf5d-80c3-4020-ac99-5777ca38df46\userFiles-d05ed8b2-c0b9-46ec-bd95-87c39e89d259\fetchFileTemp2958913333697718827.tmp
+26/11/17 10:41:51 INFO Executor: Adding file:/C:/Users/manee/AppData/Local/Temp/spark-f7fcdf5d-80c3-4020-ac99-5777ca38df46/userFiles-d05ed8b2-c0b9-46ec-bd95-87c39e89d259/org.apache.spark_spark-sql-kafka-0-10_2.12-3.5.0.jar to class loader default
+26/11/17 10:41:51 INFO Executor: Fetching spark://Maneendra:55891/jars/com.google.code.findbugs_jsr305-3.0.0.jar with timestamp 1794892307404
+26/11/17 10:41:51 INFO Utils: Fetching spark://Maneendra:55891/jars/com.google.code.findbugs_jsr305-3.0.0.jar to C:\Users\manee\AppData\Local\Temp\spark-f7fcdf5d-80c3-4020-ac99-5777ca38df46\userFiles-d05ed8b2-c0b9-46ec-bd95-87c39e89d259\fetchFileTemp10221881937388356642.tmp
+26/11/17 10:41:51 INFO Executor: Adding file:/C:/Users/manee/AppData/Local/Temp/spark-f7fcdf5d-80c3-4020-ac99-5777ca38df46/userFiles-d05ed8b2-c0b9-46ec-bd95-87c39e89d259/com.google.code.findbugs_jsr305-3.0.0.jar to class loader default
+26/11/17 10:41:51 INFO Executor: Fetching spark://Maneendra:55891/jars/org.slf4j_slf4j-api-2.0.7.jar with timestamp 1794892307404
+26/11/17 10:41:51 INFO Utils: Fetching spark://Maneendra:55891/jars/org.slf4j_slf4j-api-2.0.7.jar to C:\Users\manee\AppData\Local\Temp\spark-f7fcdf5d-80c3-4020-ac99-5777ca38df46\userFiles-d05ed8b2-c0b9-46ec-bd95-87c39e89d259\fetchFileTemp622371567537088645.tmp
+26/11/17 10:41:51 INFO Executor: Adding file:/C:/Users/manee/AppData/Local/Temp/spark-f7fcdf5d-80c3-4020-ac99-5777ca38df46/userFiles-d05ed8b2-c0b9-46ec-bd95-87c39e89d259/org.slf4j_slf4j-api-2.0.7.jar to class loader default
+26/11/17 10:41:51 INFO Executor: Fetching spark://Maneendra:55891/jars/commons-logging_commons-logging-1.1.3.jar with timestamp 1794892307404
+26/11/17 10:41:51 INFO Utils: Fetching spark://Maneendra:55891/jars/commons-logging_commons-logging-1.1.3.jar to C:\Users\manee\AppData\Local\Temp\spark-f7fcdf5d-80c3-4020-ac99-5777ca38df46\userFiles-d05ed8b2-c0b9-46ec-bd95-87c39e89d259\fetchFileTemp17574840480476874758.tmp
+26/11/17 10:41:52 INFO Executor: Adding file:/C:/Users/manee/AppData/Local/Temp/spark-f7fcdf5d-80c3-4020-ac99-5777ca38df46/userFiles-d05ed8b2-c0b9-46ec-bd95-87c39e89d259/commons-logging_commons-logging-1.1.3.jar to class loader default
+26/11/17 10:41:52 INFO Utils: Successfully started service 'org.apache.spark.network.netty.NettyBlockTransferService' on port 55894.
+26/11/17 10:41:52 INFO NettyBlockTransferService: Server created on Maneendra:55894
+26/11/17 10:41:52 INFO BlockManager: Using org.apache.spark.storage.RandomBlockReplicationPolicy for block replication policy
+26/11/17 10:41:52 INFO BlockManagerMaster: Registering BlockManager BlockManagerId(driver, Maneendra, 55894, None)
+26/11/17 10:41:52 INFO BlockManagerMasterEndpoint: Registering block manager Maneendra:55894 with 434.4 MiB RAM, BlockManagerId(driver, Maneendra, 55894, None)
+26/11/17 10:41:52 INFO BlockManagerMaster: Registered BlockManager BlockManagerId(driver, Maneendra, 55894, None)
+26/11/17 10:41:52 INFO BlockManager: Initialized BlockManager: BlockManagerId(driver, Maneendra, 55894, None)
+26/11/17 10:41:57 WARN ResolveWriteToStream: spark.sql.adaptive.enabled is not supported in streaming DataFrames/Datasets and will be disabled.
+26/11/17 10:41:58 WARN ResolveWriteToStream: spark.sql.adaptive.enabled is not supported in streaming DataFrames/Datasets and will be disabled.
+26/11/17 10:41:58 WARN ResolveWriteToStream: spark.sql.adaptive.enabled is not supported in streaming DataFrames/Datasets and will be disabled.
+26/11/17 10:41:58 WARN AdminClientConfig: These configurations '[key.deserializer, value.deserializer, enable.auto.commit, max.poll.records, auto.offset.reset]' were supplied but are not used yet.
+26/11/17 10:41:58 WARN AdminClientConfig: These configurations '[key.deserializer, value.deserializer, enable.auto.commit, max.poll.records, auto.offset.reset]' were supplied but are not used yet.
+26/11/17 10:41:59 WARN AdminClientConfig: These configurations '[key.deserializer, value.deserializer, enable.auto.commit, max.poll.records, auto.offset.reset]' were supplied but are not used yet.
+-------------------------------------------
+Batch: 0
+-------------------------------------------
++------+-----+-----+--------+-------------------+
+|postId|views|likes|comments|connection_requests|
++------+-----+-----+--------+-------------------+
+|p1001 |6    |4    |4       |0                  |
+|p1002 |2    |2    |0       |2                  |
++------+-----+-----+--------+-------------------+
+
+---PS C:\Users\manee> docker exec -it kafka /opt/bitnami/kafka/bin/kafka-console-producer.sh --bootstrap-server localhost:9092 --topic linkedin-events
+>{"eventId":"e001","memberId":"m101","postId":"p1001","eventType":"view","eventTime":"2026-11-17T10:00:05Z"}
+{"eventId":"e002","memberId":"m102","postId":"p1001","eventType":"view","eventTime":"2026-11-17T10:00:12Z"}
+{"eventId":"e003","memberId":"m101","postId":"p1001","eventType":"like","eventTime":"2026-11-17T10:00:20Z"}
+{"eventId":"e004","memberId":"m103","postId":"p1001","eventType":"comment","eventTime":"2026-11-17T10:00:35Z"}
+{"eventId":"e005","memberId":"m102","postId":"p1002","eventType":"view","eventTime":"2026-11-17T10:00:40Z"}
+{"eventId":"e006","memberId":"m104","postId":"p1002","eventType":"like","eventTime":"2026-11-17T10:00:50Z"}
+{"eventId":"e007","memberId":"m101","postId":"p1002","eventType":"connection_request","eventTime":"2026-11-17T10:01:05Z"}
+{"eventId":"e008","memberId":"m103","postId":"p1001","eventType":"view","eventTime":"2026-11-17T10:01:15Z"}
+{"eventId":"e009","memberId":"m105","postId":"p1001","eventType":"like","eventTime":"2026-11-17T10:01:25Z"}
+{"eventId":"e010","memberId":"m102","postId":"p1001","eventType":"comment","eventTime":"2026-11-17T10:01:40Z"}
+>>>>>>>>>>
+>{"eventId":"e001","memberId":"m101","postId":"p1001","eventType":"view","eventTime":"2026-11-17T10:00:05Z"}
+{"eventId":"e002","memberId":"m102","postId":"p1001","eventType":"view","eventTime":"2026-11-17T10:00:12Z"}
+{"eventId":"e003","memberId":"m101","postId":"p1001","eventType":"like","eventTime":"2026-11-17T10:00:20Z"}
+{"eventId":"e004","memberId":"m103","postId":"p1001","eventType":"comment","eventTime":"2026-11-17T10:00:35Z"}
+{"eventId":"e005","memberId":"m102","postId":"p1002","eventType":"view","eventTime":"2026-11-17T10:00:40Z"}
+{"eventId":"e006","memberId":"m104","postId":"p1002","eventType":"like","eventTime":"2026-11-17T10:00:50Z"}
+{"eventId":"e007","memberId":"m101","postId":"p1002","eventType":"connection_request","eventTime":"2026-11-17T10:01:05Z"}
+{"eventId":"e008","memberId":"m103","postId":"p1001","eventType":"view","eventTime":"2026-11-17T10:01:15Z"}
+{"eventId":"e009","memberId":"m105","postId":"p1001","eventType":"like","eventTime":"2026-11-17T10:01:25Z"}
+{"eventId":"e010","memberId":"m102","postId":"p1001","eventType":"comment","eventTime":"2026-11-17T10:01:40Z"}
+>>>>>>>>>>
+>{"eventId":"e011","memberId":"m106","postId":"p1001","eventType":"view","eventTime":"2026-11-17T10:02:10Z"}
+{"eventId":"e012","memberId":"m101","postId":"p1001","eventType":"like","eventTime":"2026-11-17T10:02:20Z"}
+{"eventId":"e013","memberId":"m107","postId":"p1002","eventType":"comment","eventTime":"2026-11-17T10:02:35Z"}
+>>>
+>
+
+
+
+
+-------------------------------------------
+Batch: 0
+-------------------------------------------
++------+-----+-----+--------+-------------------+
+|postId|views|likes|comments|connection_requests|
++------+-----+-----+--------+-------------------+
+|p1001 |6    |4    |4       |0                  |
+|p1002 |2    |2    |0       |2                  |
++------+-----+-----+--------+-------------------+
+
+-------------------------------------------
+Batch: 0
+-------------------------------------------
++------------------------------------------+------+-----+-----+--------+-------------------+
+|window                                    |postId|views|likes|comments|connection_requests|
++------------------------------------------+------+-----+-----+--------+-------------------+
+|{2026-11-17 15:31:00, 2026-11-17 15:32:00}|p1001 |2    |2    |2       |0                  |
+|{2026-11-17 15:30:00, 2026-11-17 15:31:00}|p1002 |2    |2    |0       |0                  |
+|{2026-11-17 15:30:00, 2026-11-17 15:31:00}|p1001 |4    |2    |2       |0                  |
+|{2026-11-17 15:31:00, 2026-11-17 15:32:00}|p1002 |0    |0    |0       |2                  |
++------------------------------------------+------+-----+-----+--------+-------------------+
+
+-------------------------------------------
+Batch: 0
+-------------------------------------------
++------+--------------+
+|postId|unique_members|
++------+--------------+
+|p1001 |4             |
+|p1002 |3             |
++------+--------------+
+
+-------------------------------------------
+Batch: 1
+-------------------------------------------
++------+------+-----+-----+--------+-------------------+
+|window|postId|views|likes|comments|connection_requests|
++------+------+-----+-----+--------+-------------------+
++------+------+-----+-----+--------+-------------------+
