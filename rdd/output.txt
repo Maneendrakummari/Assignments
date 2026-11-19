@@ -1,0 +1,140 @@
+PS C:\Users\manee\OneDrive\Documents\scala-intllij\rdd> sbt compile
+[info] welcome to sbt 1.10.7 (Eclipse Adoptium Java 17.0.21)
+[info] loading project definition from C:\Users\manee\OneDrive\Documents\scala-intllij\rdd\project
+[info] loading settings for project root from build.sbt...
+[info] set current project to rdd (in build file:/C:/Users/manee/OneDrive/Documents/scala-intllij/rdd/)
+[info] Executing in batch mode. For better performance use sbt's shell
+[info] compiling 1 Scala source to C:\Users\manee\OneDrive\Documents\scala-intllij\rdd\target\scala-2.12\classes ...
+[success] Total time: 24 s, completed 19-Nov-2026, 3:27:12 pm
+PS C:\Users\manee\OneDrive\Documents\scala-intllij\rdd> sbt "runMain com.demo.CustomerOrdersShuffleAnalysis"
+[info] welcome to sbt 1.10.7 (Eclipse Adoptium Java 17.0.21)
+[info] loading project definition from C:\Users\manee\OneDrive\Documents\scala-intllij\rdd\project
+[info] loading settings for project root from build.sbt...
+[info] set current project to rdd (in build file:/C:/Users/manee/OneDrive/Documents/scala-intllij/rdd/)
+[info] running (fork) com.demo.CustomerOrdersShuffleAnalysis 
+[error] Using Spark's default log4j profile: org/apache/spark/log4j2-defaults.properties
+[error] 26/11/19 15:27:31 INFO SparkContext: Running Spark version 3.5.3
+[error] 26/11/19 15:27:31 INFO SparkContext: OS info Windows 11, 10.0, amd64
+[error] 26/11/19 15:27:31 INFO SparkContext: Java version 17.0.21
+[error] 26/11/19 15:27:32 INFO ResourceUtils: ==============================================================
+[error] 26/11/19 15:27:32 INFO ResourceUtils: No custom resources configured for spark.driver.
+[error] 26/11/19 15:27:32 INFO ResourceUtils: ==============================================================
+[error] 26/11/19 15:27:32 INFO SparkContext: Submitted application: CustomerOrders-RDD-vs-DataFrame-Shuffle
+[error] 26/11/19 15:27:32 INFO ResourceProfile: Default ResourceProfile created, executor resources: Map(cores -> name: cores, amount: 1, script: , vendor: , memory -> name: memory, amount: 1024, script: , vendor: , offHeap -> name: offHeap, amount: 0, script: , vendor: ), task resources: Map(cpus -> name: cpus, amount: 1.0)
+[error] 26/11/19 15:27:32 INFO ResourceProfile: Limiting resource is cpu
+[error] 26/11/19 15:27:32 INFO ResourceProfileManager: Added ResourceProfile id: 0
+[error] 26/11/19 15:27:32 INFO SecurityManager: Changing view acls to: manee
+[error] 26/11/19 15:27:32 INFO SecurityManager: Changing modify acls to: manee
+[error] 26/11/19 15:27:32 INFO SecurityManager: Changing view acls groups to: 
+[error] 26/11/19 15:27:32 INFO SecurityManager: Changing modify acls groups to: 
+[error] 26/11/19 15:27:32 INFO SecurityManager: SecurityManager: authentication disabled; ui acls disabled; users with view permissions: manee; groups with view permissions: EMPTY; users with modify permissions: manee; groups with modify permissions: EMPTY
+[error] 26/11/19 15:27:33 INFO Utils: Successfully started service 'sparkDriver' on port 59584.
+[error] 26/11/19 15:27:33 INFO SparkEnv: Registering MapOutputTracker
+[error] 26/11/19 15:27:33 INFO SparkEnv: Registering BlockManagerMaster
+[error] 26/11/19 15:27:33 INFO BlockManagerMasterEndpoint: Using org.apache.spark.storage.DefaultTopologyMapper for getting topology information
+[error] 26/11/19 15:27:33 INFO BlockManagerMasterEndpoint: BlockManagerMasterEndpoint up
+[error] 26/11/19 15:27:33 INFO SparkEnv: Registering BlockManagerMasterHeartbeat
+[error] 26/11/19 15:27:33 INFO DiskBlockManager: Created local directory at C:\Users\manee\AppData\Local\Temp\blockmgr-dc1c4c78-738d-4a39-96bc-04360e03dffc
+[error] 26/11/19 15:27:33 INFO MemoryStore: MemoryStore started with capacity 2.2 GiB
+[error] 26/11/19 15:27:33 INFO SparkEnv: Registering OutputCommitCoordinator
+[error] 26/11/19 15:27:33 INFO JettyUtils: Start Jetty 0.0.0.0:4040 for SparkUI
+[error] 26/11/19 15:27:33 INFO Utils: Successfully started service 'SparkUI' on port 4040.
+[error] 26/11/19 15:27:33 INFO Executor: Starting executor ID driver on host Maneendra
+[error] 26/11/19 15:27:33 INFO Executor: OS info Windows 11, 10.0, amd64
+[error] 26/11/19 15:27:33 INFO Executor: Java version 17.0.21
+[error] 26/11/19 15:27:33 INFO Executor: Starting executor with user classpath (userClassPathFirst = false): ''
+[error] 26/11/19 15:27:33 INFO Executor: Created or updated repl class loader org.apache.spark.util.MutableURLClassLoader@43d9f1a2 for default.
+[error] 26/11/19 15:27:33 INFO Utils: Successfully started service 'org.apache.spark.network.netty.NettyBlockTransferService' on port 59585.
+[error] 26/11/19 15:27:33 INFO NettyBlockTransferService: Server created on Maneendra:59585
+[error] 26/11/19 15:27:34 INFO BlockManager: Using org.apache.spark.storage.RandomBlockReplicationPolicy for block replication policy
+[error] 26/11/19 15:27:34 INFO BlockManagerMaster: Registering BlockManager BlockManagerId(driver, Maneendra, 59585, None)
+[error] 26/11/19 15:27:34 INFO BlockManagerMasterEndpoint: Registering block manager Maneendra:59585 with 2.2 GiB RAM, BlockManagerId(driver, Maneendra, 59585, None)
+[error] 26/11/19 15:27:34 INFO BlockManagerMaster: Registered BlockManager BlockManagerId(driver, Maneendra, 59585, None)
+[error] 26/11/19 15:27:34 INFO BlockManager: Initialized BlockManager: BlockManagerId(driver, Maneendra, 59585, None)
+[info] === P1 RDD (customer_id, customer_name, total_order_value) ===
+[info] (C104,Divya,67000)
+[info] (C101,Anita,58000)
+[info] (C102,Bharat,34000)
+[info] (C103,Charan,31000)
+[info] (C105,Esha,29000)
+[info] === P1 DF ===
+[info] (C104,Divya,67000)
+[info] (C101,Anita,58000)
+[info] (C102,Bharat,34000)
+[info] (C103,Charan,31000)
+[info] (C105,Esha,29000)
+[info] === P2 RDD (product, units_sold) ===
+[info] (Mouse,5)
+[info] (Chair,3)
+[info] (Desk,3)
+[info] (Phone,3)
+[info] (Laptop,2)
+[info] (Headphones,1)
+[info] (Keyboard,1)
+[info] === P2 DF ===
+[info] (Mouse,5)
+[info] (Chair,3)
+[info] (Desk,3)
+[info] (Phone,3)
+[info] (Laptop,2)
+[info] (Headphones,1)
+[info] (Keyboard,1)
+[info] === P3 RDD (status, order_count) ===
+[info] (Delivered,8)
+[info] (Cancelled,2)
+[info] (Returned,2)
+[info] === P3 DF ===
+[info] (Delivered,8)
+[info] (Cancelled,2)
+[info] (Returned,2)
+[info] All assertions passed: RDD and DataFrame results are identical.
+[info] --- P1 RDD lineage ---
+[info] (4) MapPartitionsRDD[8] at sortBy at CustomerOrdersShuffleAnalysis.scala:52 []
+[info]  |  ShuffledRDD[7] at sortBy at CustomerOrdersShuffleAnalysis.scala:52 []
+[info]  +-(4) MapPartitionsRDD[4] at sortBy at CustomerOrdersShuffleAnalysis.scala:52 []
+[info]     |  MapPartitionsRDD[3] at map at CustomerOrdersShuffleAnalysis.scala:51 []
+[info]     |  ShuffledRDD[2] at reduceByKey at CustomerOrdersShuffleAnalysis.scala:50 []
+[info]     +-(4) MapPartitionsRDD[1] at map at CustomerOrdersShuffleAnalysis.scala:49 []
+[info]        |  ParallelCollectionRDD[0] at parallelize at CustomerOrdersShuffleAnalysis.scala:45 []
+[info] --- P2 RDD lineage ---
+[info] (4) MapPartitionsRDD[27] at sortBy at CustomerOrdersShuffleAnalysis.scala:65 []
+[info]  |  ShuffledRDD[26] at sortBy at CustomerOrdersShuffleAnalysis.scala:65 []
+[info]  +-(4) MapPartitionsRDD[23] at sortBy at CustomerOrdersShuffleAnalysis.scala:65 []
+[info]     |  ShuffledRDD[22] at reduceByKey at CustomerOrdersShuffleAnalysis.scala:64 []
+[info]     +-(4) MapPartitionsRDD[21] at map at CustomerOrdersShuffleAnalysis.scala:63 []
+[info]        |  ParallelCollectionRDD[0] at parallelize at CustomerOrdersShuffleAnalysis.scala:45 []
+[info] --- P3 RDD lineage ---
+[info] (3) MapPartitionsRDD[46] at sortBy at CustomerOrdersShuffleAnalysis.scala:78 []
+[info]  |  ShuffledRDD[45] at sortBy at CustomerOrdersShuffleAnalysis.scala:78 []
+[info]  +-(4) MapPartitionsRDD[42] at sortBy at CustomerOrdersShuffleAnalysis.scala:78 []
+[info]     |  ShuffledRDD[41] at reduceByKey at CustomerOrdersShuffleAnalysis.scala:77 []
+[info]     +-(4) MapPartitionsRDD[40] at map at CustomerOrdersShuffleAnalysis.scala:76 []
+[info]        |  ParallelCollectionRDD[0] at parallelize at CustomerOrdersShuffleAnalysis.scala:45 []
+[info] --- P1 DF physical plan ---
+[info] == Physical Plan ==
+[info] *(3) Sort [total_order_value#34L DESC NULLS LAST, customer_id#10 ASC NULLS FIRST], true, 0
+[info] +- Exchange rangepartitioning(total_order_value#34L DESC NULLS LAST, customer_id#10 ASC NULLS FIRST, 4), ENSURE_REQUIREMENTS, [plan_id=31]
+[info]    +- *(2) HashAggregate(keys=[customer_id#10, customer_name#11], functions=[sum(order_amount#15L)])
+[info]       +- Exchange hashpartitioning(customer_id#10, customer_name#11, 4), ENSURE_REQUIREMENTS, [plan_id=27]
+[info]          +- *(1) HashAggregate(keys=[customer_id#10, customer_name#11], functions=[partial_sum(order_amount#15L)])
+[info]             +- *(1) SerializeFromObject [staticinvoke(class org.apache.spark.unsafe.types.UTF8String, StringType, fromString, knownnotnull(assertnotnull(input[0, com.demo.CustomerOrder, true])).customer_id, true, false, true) AS customer_id#10, staticinvoke(class org.apache.spark.unsafe.types.UTF8String, StringType, fromString, knownnotnull(assertnotnull(input[0, com.demo.CustomerOrder, true])).customer_name, true, false, true) AS customer_name#11, knownnotnull(assertnotnull(input[0, com.demo.CustomerOrder, true])).order_amount AS order_amount#15L]
+[info]                +- Scan[obj#8]
+[info] --- P2 DF physical plan ---
+[info] == Physical Plan ==
+[info] *(3) Sort [units_sold#56L DESC NULLS LAST, product#12 ASC NULLS FIRST], true, 0
+[info] +- Exchange rangepartitioning(units_sold#56L DESC NULLS LAST, product#12 ASC NULLS FIRST, 4), ENSURE_REQUIREMENTS, [plan_id=81]
+[info]    +- *(2) HashAggregate(keys=[product#12], functions=[sum(quantity#14)])
+[info]       +- Exchange hashpartitioning(product#12, 4), ENSURE_REQUIREMENTS, [plan_id=77]
+[info]          +- *(1) HashAggregate(keys=[product#12], functions=[partial_sum(quantity#14)])
+[info]             +- *(1) SerializeFromObject [staticinvoke(class org.apache.spark.unsafe.types.UTF8String, StringType, fromString, knownnotnull(assertnotnull(input[0, com.demo.CustomerOrder, true])).product, true, false, true) AS product#12, knownnotnull(assertnotnull(input[0, com.demo.CustomerOrder, true])).quantity AS quantity#14]
+[info]                +- Scan[obj#8]
+[info] --- P3 DF physical plan ---
+[info] == Physical Plan ==
+[info] *(3) Sort [order_count#76L DESC NULLS LAST, status#16 ASC NULLS FIRST], true, 0
+[info] +- Exchange rangepartitioning(order_count#76L DESC NULLS LAST, status#16 ASC NULLS FIRST, 4), ENSURE_REQUIREMENTS, [plan_id=131]
+[info]    +- *(2) HashAggregate(keys=[status#16], functions=[count(1)])
+[info]       +- Exchange hashpartitioning(status#16, 4), ENSURE_REQUIREMENTS, [plan_id=127]
+[info]          +- *(1) HashAggregate(keys=[status#16], functions=[partial_count(1)])
+[info]             +- *(1) SerializeFromObject [staticinvoke(class org.apache.spark.unsafe.types.UTF8String, StringType, fromString, knownnotnull(assertnotnull(input[0, com.demo.CustomerOrder, true])).status, true, false, true) AS status#16]
+[info]                +- Scan[obj#8]
+[success] Total time: 22 s, completed 19-Nov-2026, 3:27:47 pm
