@@ -1,0 +1,471 @@
+PS C:\Users\manee\OneDrive\Documents\scala-intllij\kafka-iceberg-social-media-assignment> sbt compile
+[info] welcome to sbt 1.10.7 (Eclipse Adoptium Java 17.0.21)
+[info] loading project definition from C:\Users\manee\OneDrive\Documents\scala-intllij\kafka-iceberg-social-media-assignment\project
+[info] loading settings for project root from build.sbt...
+[info] set current project to kafka-iceberg-social-media-assignment (in build file:/C:/Users/manee/OneDrive/Documents/scala-intllij/kafka-iceberg-social-media-assignment/)
+[info] Executing in batch mode. For better performance use sbt's shell
+[info] compiling 3 Scala sources to C:\Users\manee\OneDrive\Documents\scala-intllij\kafka-iceberg-social-media-assignment\target\scala-2.12\classes ...
+[success] Total time: 11 s, completed 18-Nov-2026, 11:17:25 am
+PS C:\Users\manee\OneDrive\Documents\scala-intllij\kafka-iceberg-social-media-assignment> docker start kafka
+kafka
+PS C:\Users\manee\OneDrive\Documents\scala-intllij\kafka-iceberg-social-media-assignment> docker ps --filter name=kafka
+CONTAINER ID   IMAGE                                                       COMMAND                  CREATED        STATUS          PORTS                                         NAMES
+ee15ca0d9f0c   provectuslabs/kafka-ui:latest                               "/bin/sh -c 'java --…"   25 hours ago   Up 37 minutes   0.0.0.0:8088->8080/tcp, [::]:8088->8080/tcp   kafka-ui
+73a64d2178af   ghcr.io/element-hq/bitnamilegacy/kafka:3.7.1-debian-12-r4   "/opt/bitnami/script…"   25 hours ago   Up 45 minutes   0.0.0.0:9092->9094/tcp, [::]:9092->9094/tcp   kafka
+PS C:\Users\manee\OneDrive\Documents\scala-intllij\kafka-iceberg-social-media-assignment> docker exec kafka /opt/bitnami/kafka/bin/kafka-topics.sh --bootstrap-server localhost:9092 --create --topic social-media --partitions 3 --replication-factor 1
+Created topic social-media.
+PS C:\Users\manee\OneDrive\Documents\scala-intllij\kafka-iceberg-social-media-assignment> docker exec kafka /opt/bitnami/kafka/bin/kafka-topics.sh --bootstrap-server localhost:9092 --list
+__consumer_offsets
+linkedin-events
+linkedin-events-demo
+social-media
+PS C:\Users\manee\OneDrive\Documents\scala-intllij\kafka-iceberg-social-media-assignment> docker exec kafka /opt/bitnami/kafka/bin/kafka-topics.sh --bootstrap-server localhost:9092 --describe --topic social-media
+Topic: social-media     TopicId: KWv6MwmDR8mGWg0iuK51dw PartitionCount: 3       ReplicationFactor: 1    Configs:
+        Topic: social-media     Partition: 0    Leader: 1       Replicas: 1     Isr: 1
+        Topic: social-media     Partition: 1    Leader: 1       Replicas: 1     Isr: 1
+        Topic: social-media     Partition: 2    Leader: 1       Replicas: 1     Isr: 1
+PS C:\Users\manee\OneDrive\Documents\scala-intllij\kafka-iceberg-social-media-assignment> docker exec kafka /opt/bitnami/kafka/bin/kafka-get-offsets.sh --bootstrap-server localhost:9092 --topic social-media
+social-media:0:0
+social-media:1:0
+social-media:2:0
+PS C:\Users\manee\OneDrive\Documents\scala-intllij\kafka-iceberg-social-media-assignment> $env:HADOOP_HOME = "C:\hadoop"
+PS C:\Users\manee\OneDrive\Documents\scala-intllij\kafka-iceberg-social-media-assignment> $env:PATH = "$env:HADOOP_HOME\bin;$env:PATH"
+PS C:\Users\manee\OneDrive\Documents\scala-intllij\kafka-iceberg-social-media-assignment> sbt compile
+[info] welcome to sbt 1.10.7 (Eclipse Adoptium Java 17.0.21)
+[info] loading project definition from C:\Users\manee\OneDrive\Documents\scala-intllij\kafka-iceberg-social-media-assignment\project
+[info] loading settings for project root from build.sbt...
+[info] set current project to kafka-iceberg-social-media-assignment (in build file:/C:/Users/manee/OneDrive/Documents/scala-intllij/kafka-iceberg-social-media-assignment/)
+[info] Executing in batch mode. For better performance use sbt's shell
+[info] compiling 1 Scala source to C:\Users\manee\OneDrive\Documents\scala-intllij\kafka-iceberg-social-media-assignment\target\scala-2.12\classes ...
+[success] Total time: 7 s, completed 18-Nov-2026, 11:20:48 am
+PS C:\Users\manee\OneDrive\Documents\scala-intllij\kafka-iceberg-social-media-assignment> cd C:\Users\manee\OneDrive\Documents\scala-intllij\kafka-iceberg-social-media-assignment
+PS C:\Users\manee\OneDrive\Documents\scala-intllij\kafka-iceberg-social-media-assignment> (Get-Content .\sample_events.jsonl).Count
+Get-Content : Cannot find path
+'C:\Users\manee\OneDrive\Documents\scala-intllij\kafka-iceberg-social-media-assignment\sample_events.jsonl' because it does not
+exist.
+At line:1 char:2
++ (Get-Content .\sample_events.jsonl).Count
++  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (C:\Users\manee\...le_events.jsonl:String) [Get-Content], ItemNotFoundException
+    + FullyQualifiedErrorId : PathNotFound,Microsoft.PowerShell.Commands.GetContentCommand
+
+0
+PS C:\Users\manee\OneDrive\Documents\scala-intllij\kafka-iceberg-social-media-assignment> Get-Content .\sample_events.jsonl | docker exec -i kafka /opt/bitnami/kafka/bin/kafka-console-producer.sh --bootstrap-server localhost:9092 --topic social-media
+Get-Content : Cannot find path
+'C:\Users\manee\OneDrive\Documents\scala-intllij\kafka-iceberg-social-media-assignment\sample_events.jsonl' because it does not
+exist.
+At line:1 char:1
++ Get-Content .\sample_events.jsonl | docker exec -i kafka /opt/bitnami ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (C:\Users\manee\...le_events.jsonl:String) [Get-Content], ItemNotFoundException
+    + FullyQualifiedErrorId : PathNotFound,Microsoft.PowerShell.Commands.GetContentCommand
+
+PS C:\Users\manee\OneDrive\Documents\scala-intllij\kafka-iceberg-social-media-assignment> @'
+>> {"event_id":"evt-1001","post_id":"post-501","user_id":"user-101","event_type":"VIEW","event_time":"2026-11-17 10:00:00","views":1,"likes":0,"comments":0}
+>> {"event_id":"evt-1002","post_id":"post-501","user_id":"user-102","event_type":"LIKE","event_time":"2026-11-17 10:00:05","views":0,"likes":1,"comments":0}
+>> {"event_id":"evt-1003","post_id":"post-502","user_id":"user-103","event_type":"COMMENT","event_time":"2026-11-17 10:00:10","views":0,"likes":0,"comments":1}
+>> {"event_id":"evt-1004","post_id":"post-501","user_id":"user-104","event_type":"VIEW","event_time":"2026-11-17 10:00:15","views":1,"likes":0,"comments":0}
+>> {"event_id":"evt-1005","post_id":"post-503","user_id":"user-105","event_type":"LIKE","event_time":"2026-11-17 10:00:20","views":0,"likes":1,"comments":0}
+>> {"event_id":"evt-1006","post_id":"post-502","user_id":"user-106","event_type":"VIEW","event_time":"2026-11-17 10:00:25","views":1,"likes":0,"comments":0}
+>> {"event_id":"evt-1007","post_id":"post-503","user_id":"user-107","event_type":"COMMENT","event_time":"2026-11-17 10:00:30","views":0,"likes":0,"comments":1}
+>> {"event_id":"evt-1008","post_id":"post-501","user_id":"user-108","event_type":"LIKE","event_time":"2026-11-17 10:00:35","views":0,"likes":1,"comments":0}
+>> '@ | Set-Content -Path sample_events.jsonl -Encoding ascii
+PS C:\Users\manee\OneDrive\Documents\scala-intllij\kafka-iceberg-social-media-assignment> (Get-Content .\sample_events.jsonl).Count
+8
+PS C:\Users\manee\OneDrive\Documents\scala-intllij\kafka-iceberg-social-media-assignment> Get-Content .\sample_events.jsonl | docker exec -i kafka /opt/bitnami/kafka/bin/kafka-console-producer.sh --bootstrap-server localhost:9092 --topic social-media
+PS C:\Users\manee\OneDrive\Documents\scala-intllij\kafka-iceberg-social-media-assignment> sbt "runMain com.demo.KafkaToIcebergStreaming"
+[info] welcome to sbt 1.10.7 (Eclipse Adoptium Java 17.0.21)
+[info] loading project definition from C:\Users\manee\OneDrive\Documents\scala-intllij\kafka-iceberg-social-media-assignment\project
+[info] loading settings for project root from build.sbt...
+[info] set current project to kafka-iceberg-social-media-assignment (in build file:/C:/Users/manee/OneDrive/Documents/scala-intllij/kafka-iceberg-social-media-assignment/)
+[info] running (fork) com.demo.KafkaToIcebergStreaming
+[info] ========== HADOOP DIAGNOSTICS ==========
+[info] Hadoop version: 3.3.4
+[info] Hadoop home: C:/hadoop
+[info] Hadoop DLL exists: true
+[info] ========================================
+[error] Using Spark's default log4j profile: org/apache/spark/log4j2-defaults.properties
+[error] 26/11/18 11:27:48 INFO SparkContext: Running Spark version 3.5.9
+[error] 26/11/18 11:27:48 INFO SparkContext: OS info Windows 11, 10.0, amd64
+[error] 26/11/18 11:27:48 INFO SparkContext: Java version 17.0.21
+[error] 26/11/18 11:27:50 INFO ResourceUtils: ==============================================================
+[error] 26/11/18 11:27:50 INFO ResourceUtils: No custom resources configured for spark.driver.
+[error] 26/11/18 11:27:50 INFO ResourceUtils: ==============================================================
+[error] 26/11/18 11:27:50 INFO SparkContext: Submitted application: KafkaToIcebergStreaming
+[error] 26/11/18 11:27:50 INFO ResourceProfile: Default ResourceProfile created, executor resources: Map(cores -> name: cores, amount: 1, script: , vendor: , memory -> name: memory, amount: 1024, script: , vendor: , offHeap -> name: offHeap, amount: 0, script: , vendor: ), task resources: Map(cpus -> name: cpus, amount: 1.0)
+[error] 26/11/18 11:27:50 INFO ResourceProfile: Limiting resource is cpu
+[error] 26/11/18 11:27:50 INFO ResourceProfileManager: Added ResourceProfile id: 0
+[error] 26/11/18 11:27:50 INFO SecurityManager: Changing view acls to: manee
+[error] 26/11/18 11:27:50 INFO SecurityManager: Changing modify acls to: manee
+[error] 26/11/18 11:27:50 INFO SecurityManager: Changing view acls groups to:
+[error] 26/11/18 11:27:50 INFO SecurityManager: Changing modify acls groups to:
+[error] 26/11/18 11:27:50 INFO SecurityManager: SecurityManager: authentication disabled; ui acls disabled; users with view permissions: manee; groups with view permissions: EMPTY; users with modify permissions: manee; groups with modify permissions: EMPTY
+[error] 26/11/18 11:27:51 INFO Utils: Successfully started service 'sparkDriver' on port 64194.
+[error] 26/11/18 11:27:51 INFO SparkEnv: Registering MapOutputTracker
+[error] 26/11/18 11:27:51 INFO SparkEnv: Registering BlockManagerMaster
+[error] 26/11/18 11:27:51 INFO BlockManagerMasterEndpoint: Using org.apache.spark.storage.DefaultTopologyMapper for getting topology information
+[error] 26/11/18 11:27:51 INFO BlockManagerMasterEndpoint: BlockManagerMasterEndpoint up
+[error] 26/11/18 11:27:51 INFO SparkEnv: Registering BlockManagerMasterHeartbeat
+[error] 26/11/18 11:27:51 INFO DiskBlockManager: Created local directory at C:\Users\manee\AppData\Local\Temp\blockmgr-4174cbc0-b1d5-4e64-89fd-e964ff0a593d
+[error] 26/11/18 11:27:51 INFO MemoryStore: MemoryStore started with capacity 2.2 GiB
+[error] 26/11/18 11:27:52 INFO SparkEnv: Registering OutputCommitCoordinator
+[error] 26/11/18 11:27:52 INFO JettyUtils: Start Jetty 0.0.0.0:4040 for SparkUI
+[error] 26/11/18 11:27:52 INFO Utils: Successfully started service 'SparkUI' on port 4040.
+[error] 26/11/18 11:27:52 INFO Executor: Starting executor ID driver on host Maneendra
+[error] 26/11/18 11:27:52 INFO Executor: OS info Windows 11, 10.0, amd64
+[error] 26/11/18 11:27:52 INFO Executor: Java version 17.0.21
+[error] 26/11/18 11:27:52 INFO Executor: Starting executor with user classpath (userClassPathFirst = false): ''
+[error] 26/11/18 11:27:52 INFO Executor: Created or updated repl class loader org.apache.spark.util.MutableURLClassLoader@33634f04 for default.
+[error] 26/11/18 11:27:52 INFO Utils: Successfully started service 'org.apache.spark.network.netty.NettyBlockTransferService' on port 64195.
+[error] 26/11/18 11:27:52 INFO NettyBlockTransferService: Server created on Maneendra:64195
+[error] 26/11/18 11:27:52 INFO BlockManager: Using org.apache.spark.storage.RandomBlockReplicationPolicy for block replication polic
+[error] 26/11/18 11:27:52 INFO BlockManagerMaster: Registering BlockManager BlockManagerId(driver, Maneendra, 64195, None)
+[error] 26/11/18 11:27:52 INFO BlockManagerMasterEndpoint: Registering block manager Maneendra:64195 with 2.2 GiB RAM, BlockManagerId(driver, Maneendra, 64195, None)
+[error] 26/11/18 11:27:52 INFO BlockManagerMaster: Registered BlockManager BlockManagerId(driver, Maneendra, 64195, None)
+[error] 26/11/18 11:27:52 INFO BlockManager: Initialized BlockManager: BlockManagerId(driver, Maneendra, 64195, None)
+[error] 26/11/18 11:27:58 WARN ResolveWriteToStream: spark.sql.adaptive.enabled is not supported in streaming DataFrames/Datasets and will be disabled.
+[info] Streaming started: Kafka topic social-media -> Iceberg table local.sales.linkedin_events
+[error] 26/11/18 11:27:59 WARN AdminClientConfig: These configurations '[key.deserializer, value.deserializer, enable.auto.commit, max.poll.records, auto.offset.reset]' were supplied but are not used yet.
+
+[warn] Canceling execution...
+[warn] Run canceled.
+Cancelled: runMain com.demo.KafkaToIcebergStreaming
+[error] Cancelled: runMain com.demo.KafkaToIcebergStreaming
+[error] Use 'last' for the full log.
+Terminate batch job (Y/N)? y
+PS C:\Users\manee\OneDrive\Documents\scala-intllij\kafka-iceberg-social-media-assignment> sbt "runMain com.demo.ReadIcebergEvents"
+[info] welcome to sbt 1.10.7 (Eclipse Adoptium Java 17.0.21)
+[info] loading project definition from C:\Users\manee\OneDrive\Documents\scala-intllij\kafka-iceberg-social-media-assignment\project
+[info] loading settings for project root from build.sbt...
+[info] set current project to kafka-iceberg-social-media-assignment (in build file:/C:/Users/manee/OneDrive/Documents/scala-intllij/kafka-iceberg-social-media-assignment/)
+[info] running (fork) com.demo.ReadIcebergEvents
+[error] Using Spark's default log4j profile: org/apache/spark/log4j2-defaults.properties
+[error] 26/11/18 11:28:57 INFO SparkContext: Running Spark version 3.5.9
+[error] 26/11/18 11:28:57 INFO SparkContext: OS info Windows 11, 10.0, amd64
+[error] 26/11/18 11:28:57 INFO SparkContext: Java version 17.0.21
+[error] 26/11/18 11:28:57 INFO ResourceUtils: ==============================================================
+[error] 26/11/18 11:28:57 INFO ResourceUtils: No custom resources configured for spark.driver.
+[error] 26/11/18 11:28:57 INFO ResourceUtils: ==============================================================
+[error] 26/11/18 11:28:57 INFO SparkContext: Submitted application: ReadIcebergEvents
+[error] 26/11/18 11:28:57 INFO ResourceProfile: Default ResourceProfile created, executor resources: Map(cores -> name: cores, amount: 1, script: , vendor: , memory -> name: memory, amount: 1024, script: , vendor: , offHeap -> name: offHeap, amount: 0, script: , vendor: ), task resources: Map(cpus -> name: cpus, amount: 1.0)
+[error] 26/11/18 11:28:57 INFO ResourceProfile: Limiting resource is cpu
+[error] 26/11/18 11:28:57 INFO ResourceProfileManager: Added ResourceProfile id: 0
+[error] 26/11/18 11:28:57 INFO SecurityManager: Changing view acls to: manee
+[error] 26/11/18 11:28:57 INFO SecurityManager: Changing modify acls to: manee
+[error] 26/11/18 11:28:57 INFO SecurityManager: Changing view acls groups to:
+[error] 26/11/18 11:28:57 INFO SecurityManager: Changing modify acls groups to:
+[error] 26/11/18 11:28:57 INFO SecurityManager: SecurityManager: authentication disabled; ui acls disabled; users with view permissions: manee; groups with view permissions: EMPTY; users with modify permissions: manee; groups with modify permissions: EMPTY
+[error] 26/11/18 11:28:58 INFO Utils: Successfully started service 'sparkDriver' on port 64613.
+[error] 26/11/18 11:28:58 INFO SparkEnv: Registering MapOutputTracker
+[error] 26/11/18 11:28:58 INFO SparkEnv: Registering BlockManagerMaster
+[error] 26/11/18 11:28:58 INFO BlockManagerMasterEndpoint: Using org.apache.spark.storage.DefaultTopologyMapper for getting topology information
+[error] 26/11/18 11:28:58 INFO BlockManagerMasterEndpoint: BlockManagerMasterEndpoint up
+[error] 26/11/18 11:28:58 INFO SparkEnv: Registering BlockManagerMasterHeartbeat
+[error] 26/11/18 11:28:58 INFO DiskBlockManager: Created local directory at C:\Users\manee\AppData\Local\Temp\blockmgr-60ec1c97-ede0-4998-b95e-cfca4e3fcbf6
+[error] 26/11/18 11:28:58 INFO MemoryStore: MemoryStore started with capacity 2.2 GiB
+[error] 26/11/18 11:28:58 INFO SparkEnv: Registering OutputCommitCoordinator
+[error] 26/11/18 11:28:58 INFO JettyUtils: Start Jetty 0.0.0.0:4040 for SparkUI
+[error] 26/11/18 11:28:58 INFO Utils: Successfully started service 'SparkUI' on port 4040.
+[error] 26/11/18 11:28:59 INFO Executor: Starting executor ID driver on host Maneendra
+[error] 26/11/18 11:28:59 INFO Executor: OS info Windows 11, 10.0, amd64
+[error] 26/11/18 11:28:59 INFO Executor: Java version 17.0.21
+[error] 26/11/18 11:28:59 INFO Executor: Starting executor with user classpath (userClassPathFirst = false): ''
+[error] 26/11/18 11:28:59 INFO Executor: Created or updated repl class loader org.apache.spark.util.MutableURLClassLoader@71e4b308 for default.
+[error] 26/11/18 11:28:59 INFO Utils: Successfully started service 'org.apache.spark.network.netty.NettyBlockTransferService' on port 62057.
+[error] 26/11/18 11:28:59 INFO NettyBlockTransferService: Server created on Maneendra:62057
+[error] 26/11/18 11:28:59 INFO BlockManager: Using org.apache.spark.storage.RandomBlockReplicationPolicy for block replication polic
+[error] 26/11/18 11:28:59 INFO BlockManagerMaster: Registering BlockManager BlockManagerId(driver, Maneendra, 62057, None)
+[error] 26/11/18 11:28:59 INFO BlockManagerMasterEndpoint: Registering block manager Maneendra:62057 with 2.2 GiB RAM, BlockManagerId(driver, Maneendra, 62057, None)
+[error] 26/11/18 11:28:59 INFO BlockManagerMaster: Registered BlockManager BlockManagerId(driver, Maneendra, 62057, None)
+[error] 26/11/18 11:28:59 INFO BlockManager: Initialized BlockManager: BlockManagerId(driver, Maneendra, 62057, None)
+[info] ALL EVENTS STORED IN ICEBERG:
+[info] +--------+--------+--------+----------+-------------------+-----+-----+--------+-------------------+-----------------------+
+[info] |event_id|post_id |user_id |event_type|event_time         |views|likes|comments|event_timestamp    |ingested_at            |
+[info] +--------+--------+--------+----------+-------------------+-----+-----+--------+-------------------+-----------------------+
+[info] |evt-1001|post-501|user-101|VIEW      |2026-11-17 10:00:00|1    |0    |0       |2026-11-17 10:00:00|2026-11-18 11:28:00.463|
+[info] |evt-1001|post-501|user-101|VIEW      |2026-11-17 10:00:00|1    |0    |0       |2026-11-17 10:00:00|2026-11-18 10:42:38.548|
+[info] |evt-1002|post-501|user-102|LIKE      |2026-11-17 10:00:05|0    |1    |0       |2026-11-17 10:00:05|2026-11-18 11:28:00.463|
+[info] |evt-1002|post-501|user-102|LIKE      |2026-11-17 10:00:05|0    |1    |0       |2026-11-17 10:00:05|2026-11-18 10:42:38.548|
+[info] |evt-1003|post-502|user-103|COMMENT   |2026-11-17 10:00:10|0    |0    |1       |2026-11-17 10:00:10|2026-11-18 11:28:00.463|
+[info] |evt-1003|post-502|user-103|COMMENT   |2026-11-17 10:00:10|0    |0    |1       |2026-11-17 10:00:10|2026-11-18 10:42:38.548|
+[info] |evt-1004|post-501|user-104|VIEW      |2026-11-17 10:00:15|1    |0    |0       |2026-11-17 10:00:15|2026-11-18 11:28:00.463|
+[info] |evt-1004|post-501|user-104|VIEW      |2026-11-17 10:00:15|1    |0    |0       |2026-11-17 10:00:15|2026-11-18 10:42:38.548|
+[info] |evt-1005|post-503|user-105|LIKE      |2026-11-17 10:00:20|0    |1    |0       |2026-11-17 10:00:20|2026-11-18 11:28:00.463|
+[info] |evt-1005|post-503|user-105|LIKE      |2026-11-17 10:00:20|0    |1    |0       |2026-11-17 10:00:20|2026-11-18 10:42:38.548|
+[info] |evt-1006|post-502|user-106|VIEW      |2026-11-17 10:00:25|1    |0    |0       |2026-11-17 10:00:25|2026-11-18 11:28:00.463|
+[info] |evt-1006|post-502|user-106|VIEW      |2026-11-17 10:00:25|1    |0    |0       |2026-11-17 10:00:25|2026-11-18 10:42:38.548|
+[info] |evt-1007|post-503|user-107|COMMENT   |2026-11-17 10:00:30|0    |0    |1       |2026-11-17 10:00:30|2026-11-18 11:28:00.463|
+[info] |evt-1007|post-503|user-107|COMMENT   |2026-11-17 10:00:30|0    |0    |1       |2026-11-17 10:00:30|2026-11-18 10:42:38.548|
+[info] |evt-1008|post-501|user-108|LIKE      |2026-11-17 10:00:35|0    |1    |0       |2026-11-17 10:00:35|2026-11-18 11:28:00.463|
+[info] |evt-1008|post-501|user-108|LIKE      |2026-11-17 10:00:35|0    |1    |0       |2026-11-17 10:00:35|2026-11-18 10:42:38.548|
+[info] |evt-1009|post-504|user-109|VIEW      |2026-11-17 10:00:40|1    |0    |0       |2026-11-17 10:00:40|2026-11-18 10:50:52.887|
+[info] +--------+--------+--------+----------+-------------------+-----+-----+--------+-------------------+-----------------------+
+[info] TOTAL EVENT COUNT: 17
+[success] Total time: 19 s, completed 18-Nov-2026, 11:29:10 am
+PS C:\Users\manee\OneDrive\Documents\scala-intllij\kafka-iceberg-social-media-assignment> sbt "runMain com.demo.AnalyzePostEngagement"
+[info] welcome to sbt 1.10.7 (Eclipse Adoptium Java 17.0.21)
+[info] loading project definition from C:\Users\manee\OneDrive\Documents\scala-intllij\kafka-iceberg-social-media-assignment\project
+[info] loading settings for project root from build.sbt...
+[info] set current project to kafka-iceberg-social-media-assignment (in build file:/C:/Users/manee/OneDrive/Documents/scala-intllij/kafka-iceberg-social-media-assignment/)
+[info] running (fork) com.demo.AnalyzePostEngagement
+[error] Using Spark's default log4j profile: org/apache/spark/log4j2-defaults.properties
+[error] 26/11/18 11:29:31 INFO SparkContext: Running Spark version 3.5.9
+[error] 26/11/18 11:29:31 INFO SparkContext: OS info Windows 11, 10.0, amd64
+[error] 26/11/18 11:29:31 INFO SparkContext: Java version 17.0.21
+[error] 26/11/18 11:29:31 INFO ResourceUtils: ==============================================================
+[error] 26/11/18 11:29:31 INFO ResourceUtils: No custom resources configured for spark.driver.
+[error] 26/11/18 11:29:31 INFO ResourceUtils: ==============================================================
+[error] 26/11/18 11:29:31 INFO SparkContext: Submitted application: AnalyzePostEngagement
+[error] 26/11/18 11:29:31 INFO ResourceProfile: Default ResourceProfile created, executor resources: Map(cores -> name: cores, amount: 1, script: , vendor: , memory -> name: memory, amount: 1024, script: , vendor: , offHeap -> name: offHeap, amount: 0, script: , vendor: ), task resources: Map(cpus -> name: cpus, amount: 1.0)
+[error] 26/11/18 11:29:31 INFO ResourceProfile: Limiting resource is cpu
+[error] 26/11/18 11:29:31 INFO ResourceProfileManager: Added ResourceProfile id: 0
+[error] 26/11/18 11:29:31 INFO SecurityManager: Changing view acls to: manee
+[error] 26/11/18 11:29:31 INFO SecurityManager: Changing modify acls to: manee
+[error] 26/11/18 11:29:31 INFO SecurityManager: Changing view acls groups to:
+[error] 26/11/18 11:29:31 INFO SecurityManager: Changing modify acls groups to:
+[error] 26/11/18 11:29:31 INFO SecurityManager: SecurityManager: authentication disabled; ui acls disabled; users with view permissions: manee; groups with view permissions: EMPTY; users with modify permissions: manee; groups with modify permissions: EMPTY
+[error] 26/11/18 11:29:32 INFO Utils: Successfully started service 'sparkDriver' on port 57514.
+[error] 26/11/18 11:29:32 INFO SparkEnv: Registering MapOutputTracker
+[error] 26/11/18 11:29:32 INFO SparkEnv: Registering BlockManagerMaster
+[error] 26/11/18 11:29:32 INFO BlockManagerMasterEndpoint: Using org.apache.spark.storage.DefaultTopologyMapper for getting topology information
+[error] 26/11/18 11:29:32 INFO BlockManagerMasterEndpoint: BlockManagerMasterEndpoint up
+[error] 26/11/18 11:29:32 INFO SparkEnv: Registering BlockManagerMasterHeartbeat
+[error] 26/11/18 11:29:32 INFO DiskBlockManager: Created local directory at C:\Users\manee\AppData\Local\Temp\blockmgr-f84554dd-274d-41c6-8491-a972b2979db7
+[error] 26/11/18 11:29:32 INFO MemoryStore: MemoryStore started with capacity 2.2 GiB
+[error] 26/11/18 11:29:32 INFO SparkEnv: Registering OutputCommitCoordinator
+[error] 26/11/18 11:29:32 INFO JettyUtils: Start Jetty 0.0.0.0:4040 for SparkUI
+[error] 26/11/18 11:29:33 INFO Utils: Successfully started service 'SparkUI' on port 4040.
+[error] 26/11/18 11:29:33 INFO Executor: Starting executor ID driver on host Maneendra
+[error] 26/11/18 11:29:33 INFO Executor: OS info Windows 11, 10.0, amd64
+[error] 26/11/18 11:29:33 INFO Executor: Java version 17.0.21
+[error] 26/11/18 11:29:33 INFO Executor: Starting executor with user classpath (userClassPathFirst = false): ''
+[error] 26/11/18 11:29:33 INFO Executor: Created or updated repl class loader org.apache.spark.util.MutableURLClassLoader@7d3c09ec for default.
+[error] 26/11/18 11:29:33 INFO Utils: Successfully started service 'org.apache.spark.network.netty.NettyBlockTransferService' on port 57515.
+[error] 26/11/18 11:29:33 INFO NettyBlockTransferService: Server created on Maneendra:57515
+[error] 26/11/18 11:29:33 INFO BlockManager: Using org.apache.spark.storage.RandomBlockReplicationPolicy for block replication polic
+[error] 26/11/18 11:29:33 INFO BlockManagerMaster: Registering BlockManager BlockManagerId(driver, Maneendra, 57515, None)
+[error] 26/11/18 11:29:33 INFO BlockManagerMasterEndpoint: Registering block manager Maneendra:57515 with 2.2 GiB RAM, BlockManagerId(driver, Maneendra, 57515, None)
+[error] 26/11/18 11:29:33 INFO BlockManagerMaster: Registered BlockManager BlockManagerId(driver, Maneendra, 57515, None)
+[error] 26/11/18 11:29:33 INFO BlockManager: Initialized BlockManager: BlockManagerId(driver, Maneendra, 57515, None)
+[info] TOTAL ROWS: 17
+[info] DISTINCT EVENT IDS: 9
+[info] POST-WISE ENGAGEMENT:
+[info] +--------+-----------+-----------+--------------+
+[info] |post_id |total_views|total_likes|total_comments|
+[info] +--------+-----------+-----------+--------------+
+[info] |post-501|4          |4          |0             |
+[info] |post-502|2          |0          |2             |
+[info] |post-503|0          |2          |2             |
+[info] |post-504|1          |0          |0             |
+[info] +--------+-----------+-----------+--------------+
+[info] POSTS RANKED BY TOTAL ENGAGEMENT:
+[info] +--------+-----------+-----------+--------------+----------------+
+[info] |post_id |total_views|total_likes|total_comments|total_engagement|
+[info] +--------+-----------+-----------+--------------+----------------+
+[info] |post-501|4          |4          |0             |8               |
+[info] |post-502|2          |0          |2             |4               |
+[info] |post-503|0          |2          |2             |4               |
+[info] |post-504|1          |0          |0             |1               |
+[info] +--------+-----------+-----------+--------------+----------------+
+[success] Total time: 22 s, completed 18-Nov-2026, 11:29:46 am
+PS C:\Users\manee\OneDrive\Documents\scala-intllij\kafka-iceberg-social-media-assignment> sbt "runMain com.demo.KafkaToIcebergStreaming"
+[info] welcome to sbt 1.10.7 (Eclipse Adoptium Java 17.0.21)
+[info] loading project definition from C:\Users\manee\OneDrive\Documents\scala-intllij\kafka-iceberg-social-media-assignment\project
+[info] loading settings for project root from build.sbt...
+[info] set current project to kafka-iceberg-social-media-assignment (in build file:/C:/Users/manee/OneDrive/Documents/scala-intllij/kafka-iceberg-social-media-assignment/)
+[info] running (fork) com.demo.KafkaToIcebergStreaming
+[info] ========== HADOOP DIAGNOSTICS ==========
+[info] Hadoop version: 3.3.4
+[info] Hadoop home: C:/hadoop
+[info] Hadoop DLL exists: true
+[info] ========================================
+[error] Using Spark's default log4j profile: org/apache/spark/log4j2-defaults.properties
+[error] 26/11/18 11:32:37 INFO SparkContext: Running Spark version 3.5.9
+[error] 26/11/18 11:32:37 INFO SparkContext: OS info Windows 11, 10.0, amd64
+[error] 26/11/18 11:32:37 INFO SparkContext: Java version 17.0.21
+[error] 26/11/18 11:32:38 INFO ResourceUtils: ==============================================================
+[error] 26/11/18 11:32:38 INFO ResourceUtils: No custom resources configured for spark.driver.
+[error] 26/11/18 11:32:38 INFO ResourceUtils: ==============================================================
+[error] 26/11/18 11:32:38 INFO SparkContext: Submitted application: KafkaToIcebergStreaming
+[error] 26/11/18 11:32:38 INFO ResourceProfile: Default ResourceProfile created, executor resources: Map(cores -> name: cores, amount: 1, script: , vendor: , memory -> name: memory, amount: 1024, script: , vendor: , offHeap -> name: offHeap, amount: 0, script: , vendor: ), task resources: Map(cpus -> name: cpus, amount: 1.0)
+[error] 26/11/18 11:32:38 INFO ResourceProfile: Limiting resource is cpu
+[error] 26/11/18 11:32:38 INFO ResourceProfileManager: Added ResourceProfile id: 0
+[error] 26/11/18 11:32:39 INFO SecurityManager: Changing view acls to: manee
+[error] 26/11/18 11:32:39 INFO SecurityManager: Changing modify acls to: manee
+[error] 26/11/18 11:32:39 INFO SecurityManager: Changing view acls groups to:
+[error] 26/11/18 11:32:39 INFO SecurityManager: Changing modify acls groups to:
+[error] 26/11/18 11:32:39 INFO SecurityManager: SecurityManager: authentication disabled; ui acls disabled; users with view permissions: manee; groups with view permissions: EMPTY; users with modify permissions: manee; groups with modify permissions: EMPTY
+[error] 26/11/18 11:32:40 INFO Utils: Successfully started service 'sparkDriver' on port 58685.
+[error] 26/11/18 11:32:40 INFO SparkEnv: Registering MapOutputTracker
+[error] 26/11/18 11:32:41 INFO SparkEnv: Registering BlockManagerMaster
+[error] 26/11/18 11:32:41 INFO BlockManagerMasterEndpoint: Using org.apache.spark.storage.DefaultTopologyMapper for getting topology information
+[error] 26/11/18 11:32:41 INFO BlockManagerMasterEndpoint: BlockManagerMasterEndpoint up
+[error] 26/11/18 11:32:41 INFO SparkEnv: Registering BlockManagerMasterHeartbeat
+[error] 26/11/18 11:32:41 INFO DiskBlockManager: Created local directory at C:\Users\manee\AppData\Local\Temp\blockmgr-c69d6f24-932a-4e3c-a22f-9970afe27f64
+[error] 26/11/18 11:32:41 INFO MemoryStore: MemoryStore started with capacity 2.2 GiB
+[error] 26/11/18 11:32:41 INFO SparkEnv: Registering OutputCommitCoordinator
+[error] 26/11/18 11:32:41 INFO JettyUtils: Start Jetty 0.0.0.0:4040 for SparkUI
+[error] 26/11/18 11:32:41 INFO Utils: Successfully started service 'SparkUI' on port 4040.
+[error] 26/11/18 11:32:41 INFO Executor: Starting executor ID driver on host Maneendra
+[error] 26/11/18 11:32:41 INFO Executor: OS info Windows 11, 10.0, amd64
+[error] 26/11/18 11:32:41 INFO Executor: Java version 17.0.21
+[error] 26/11/18 11:32:41 INFO Executor: Starting executor with user classpath (userClassPathFirst = false): ''
+[error] 26/11/18 11:32:41 INFO Executor: Created or updated repl class loader org.apache.spark.util.MutableURLClassLoader@33634f04 for default.
+[error] 26/11/18 11:32:41 INFO Utils: Successfully started service 'org.apache.spark.network.netty.NettyBlockTransferService' on port 58686.
+[error] 26/11/18 11:32:41 INFO NettyBlockTransferService: Server created on Maneendra:58686
+[error] 26/11/18 11:32:41 INFO BlockManager: Using org.apache.spark.storage.RandomBlockReplicationPolicy for block replication polic
+[error] 26/11/18 11:32:41 INFO BlockManagerMaster: Registering BlockManager BlockManagerId(driver, Maneendra, 58686, None)
+[error] 26/11/18 11:32:41 INFO BlockManagerMasterEndpoint: Registering block manager Maneendra:58686 with 2.2 GiB RAM, BlockManagerId(driver, Maneendra, 58686, None)
+[error] 26/11/18 11:32:41 INFO BlockManagerMaster: Registered BlockManager BlockManagerId(driver, Maneendra, 58686, None)
+[error] 26/11/18 11:32:41 INFO BlockManager: Initialized BlockManager: BlockManagerId(driver, Maneendra, 58686, None)
+[error] 26/11/18 11:32:47 WARN ResolveWriteToStream: spark.sql.adaptive.enabled is not supported in streaming DataFrames/Datasets and will be disabled.
+[info] Streaming started: Kafka topic social-media -> Iceberg table local.sales.linkedin_events
+[error] 26/11/18 11:32:47 WARN AdminClientConfig: These configurations '[key.deserializer, value.deserializer, enable.auto.commit, max.poll.records, auto.offset.reset]' were supplied but are not used yet.
+
+[warn] Canceling execution...
+[warn] Run canceled.
+Cancelled: runMain com.demo.KafkaToIcebergStreaming
+[error] Cancelled: runMain com.demo.KafkaToIcebergStreaming
+[error] Use 'last' for the full log.
+Terminate batch job (Y/N)? y
+PS C:\Users\manee\OneDrive\Documents\scala-intllij\kafka-iceberg-social-media-assignment> sbt "runMain com.demo.ReadIcebergEvents"
+[info] welcome to sbt 1.10.7 (Eclipse Adoptium Java 17.0.21)
+[info] loading project definition from C:\Users\manee\OneDrive\Documents\scala-intllij\kafka-iceberg-social-media-assignment\project
+[info] loading settings for project root from build.sbt...
+[info] set current project to kafka-iceberg-social-media-assignment (in build file:/C:/Users/manee/OneDrive/Documents/scala-intllij/kafka-iceberg-social-media-assignment/)
+[info] running (fork) com.demo.ReadIcebergEvents
+[error] Using Spark's default log4j profile: org/apache/spark/log4j2-defaults.properties
+[error] 26/11/18 11:33:30 INFO SparkContext: Running Spark version 3.5.9
+[error] 26/11/18 11:33:30 INFO SparkContext: OS info Windows 11, 10.0, amd64
+[error] 26/11/18 11:33:30 INFO SparkContext: Java version 17.0.21
+[error] 26/11/18 11:33:31 INFO ResourceUtils: ==============================================================
+[error] 26/11/18 11:33:31 INFO ResourceUtils: No custom resources configured for spark.driver.
+[error] 26/11/18 11:33:31 INFO ResourceUtils: ==============================================================
+[error] 26/11/18 11:33:31 INFO SparkContext: Submitted application: ReadIcebergEvents
+[error] 26/11/18 11:33:31 INFO ResourceProfile: Default ResourceProfile created, executor resources: Map(cores -> name: cores, amount: 1, script: , vendor: , memory -> name: memory, amount: 1024, script: , vendor: , offHeap -> name: offHeap, amount: 0, script: , vendor: ), task resources: Map(cpus -> name: cpus, amount: 1.0)
+[error] 26/11/18 11:33:31 INFO ResourceProfile: Limiting resource is cpu
+[error] 26/11/18 11:33:31 INFO ResourceProfileManager: Added ResourceProfile id: 0
+[error] 26/11/18 11:33:31 INFO SecurityManager: Changing view acls to: manee
+[error] 26/11/18 11:33:31 INFO SecurityManager: Changing modify acls to: manee
+[error] 26/11/18 11:33:31 INFO SecurityManager: Changing view acls groups to:
+[error] 26/11/18 11:33:31 INFO SecurityManager: Changing modify acls groups to:
+[error] 26/11/18 11:33:31 INFO SecurityManager: SecurityManager: authentication disabled; ui acls disabled; users with view permissions: manee; groups with view permissions: EMPTY; users with modify permissions: manee; groups with modify permissions: EMPTY
+[error] 26/11/18 11:33:32 INFO Utils: Successfully started service 'sparkDriver' on port 55501.
+[error] 26/11/18 11:33:32 INFO SparkEnv: Registering MapOutputTracker
+[error] 26/11/18 11:33:32 INFO SparkEnv: Registering BlockManagerMaster
+[error] 26/11/18 11:33:32 INFO BlockManagerMasterEndpoint: Using org.apache.spark.storage.DefaultTopologyMapper for getting topology information
+[error] 26/11/18 11:33:32 INFO BlockManagerMasterEndpoint: BlockManagerMasterEndpoint up
+[error] 26/11/18 11:33:32 INFO SparkEnv: Registering BlockManagerMasterHeartbeat
+[error] 26/11/18 11:33:32 INFO DiskBlockManager: Created local directory at C:\Users\manee\AppData\Local\Temp\blockmgr-156ed3e4-b922-479d-8348-349d161c4515
+[error] 26/11/18 11:33:32 INFO MemoryStore: MemoryStore started with capacity 2.2 GiB
+[error] 26/11/18 11:33:32 INFO SparkEnv: Registering OutputCommitCoordinator
+[error] 26/11/18 11:33:32 INFO JettyUtils: Start Jetty 0.0.0.0:4040 for SparkUI
+[error] 26/11/18 11:33:32 INFO Utils: Successfully started service 'SparkUI' on port 4040.
+[error] 26/11/18 11:33:32 INFO Executor: Starting executor ID driver on host Maneendra
+[error] 26/11/18 11:33:32 INFO Executor: OS info Windows 11, 10.0, amd64
+[error] 26/11/18 11:33:32 INFO Executor: Java version 17.0.21
+[error] 26/11/18 11:33:32 INFO Executor: Starting executor with user classpath (userClassPathFirst = false): ''
+[error] 26/11/18 11:33:32 INFO Executor: Created or updated repl class loader org.apache.spark.util.MutableURLClassLoader@7d3c09ec for default.
+[error] 26/11/18 11:33:32 INFO Utils: Successfully started service 'org.apache.spark.network.netty.NettyBlockTransferService' on port 55502.
+[error] 26/11/18 11:33:32 INFO NettyBlockTransferService: Server created on Maneendra:55502
+[error] 26/11/18 11:33:32 INFO BlockManager: Using org.apache.spark.storage.RandomBlockReplicationPolicy for block replication polic
+[error] 26/11/18 11:33:32 INFO BlockManagerMaster: Registering BlockManager BlockManagerId(driver, Maneendra, 55502, None)
+[error] 26/11/18 11:33:32 INFO BlockManagerMasterEndpoint: Registering block manager Maneendra:55502 with 2.2 GiB RAM, BlockManagerId(driver, Maneendra, 55502, None)
+[error] 26/11/18 11:33:32 INFO BlockManagerMaster: Registered BlockManager BlockManagerId(driver, Maneendra, 55502, None)
+[error] 26/11/18 11:33:32 INFO BlockManager: Initialized BlockManager: BlockManagerId(driver, Maneendra, 55502, None)
+[info] ALL EVENTS STORED IN ICEBERG:
+[info] +--------+--------+--------+----------+-------------------+-----+-----+--------+-------------------+-----------------------+
+[info] |event_id|post_id |user_id |event_type|event_time         |views|likes|comments|event_timestamp    |ingested_at            |
+[info] +--------+--------+--------+----------+-------------------+-----+-----+--------+-------------------+-----------------------+
+[info] |evt-1001|post-501|user-101|VIEW      |2026-11-17 10:00:00|1    |0    |0       |2026-11-17 10:00:00|2026-11-18 10:42:38.548|
+[info] |evt-1001|post-501|user-101|VIEW      |2026-11-17 10:00:00|1    |0    |0       |2026-11-17 10:00:00|2026-11-18 11:28:00.463|
+[info] |evt-1002|post-501|user-102|LIKE      |2026-11-17 10:00:05|0    |1    |0       |2026-11-17 10:00:05|2026-11-18 10:42:38.548|
+[info] |evt-1002|post-501|user-102|LIKE      |2026-11-17 10:00:05|0    |1    |0       |2026-11-17 10:00:05|2026-11-18 11:28:00.463|
+[info] |evt-1003|post-502|user-103|COMMENT   |2026-11-17 10:00:10|0    |0    |1       |2026-11-17 10:00:10|2026-11-18 10:42:38.548|
+[info] |evt-1003|post-502|user-103|COMMENT   |2026-11-17 10:00:10|0    |0    |1       |2026-11-17 10:00:10|2026-11-18 11:28:00.463|
+[info] |evt-1004|post-501|user-104|VIEW      |2026-11-17 10:00:15|1    |0    |0       |2026-11-17 10:00:15|2026-11-18 10:42:38.548|
+[info] |evt-1004|post-501|user-104|VIEW      |2026-11-17 10:00:15|1    |0    |0       |2026-11-17 10:00:15|2026-11-18 11:28:00.463|
+[info] |evt-1005|post-503|user-105|LIKE      |2026-11-17 10:00:20|0    |1    |0       |2026-11-17 10:00:20|2026-11-18 10:42:38.548|
+[info] |evt-1005|post-503|user-105|LIKE      |2026-11-17 10:00:20|0    |1    |0       |2026-11-17 10:00:20|2026-11-18 11:28:00.463|
+[info] |evt-1006|post-502|user-106|VIEW      |2026-11-17 10:00:25|1    |0    |0       |2026-11-17 10:00:25|2026-11-18 10:42:38.548|
+[info] |evt-1006|post-502|user-106|VIEW      |2026-11-17 10:00:25|1    |0    |0       |2026-11-17 10:00:25|2026-11-18 11:28:00.463|
+[info] |evt-1007|post-503|user-107|COMMENT   |2026-11-17 10:00:30|0    |0    |1       |2026-11-17 10:00:30|2026-11-18 10:42:38.548|
+[info] |evt-1007|post-503|user-107|COMMENT   |2026-11-17 10:00:30|0    |0    |1       |2026-11-17 10:00:30|2026-11-18 11:28:00.463|
+[info] |evt-1008|post-501|user-108|LIKE      |2026-11-17 10:00:35|0    |1    |0       |2026-11-17 10:00:35|2026-11-18 10:42:38.548|
+[info] |evt-1008|post-501|user-108|LIKE      |2026-11-17 10:00:35|0    |1    |0       |2026-11-17 10:00:35|2026-11-18 11:28:00.463|
+[info] |evt-1009|post-504|user-109|VIEW      |2026-11-17 10:00:40|1    |0    |0       |2026-11-17 10:00:40|2026-11-18 10:50:52.887|
+[info] |evt-1010|post-501|user-110|VIEW      |2026-11-17 10:01:00|1    |0    |0       |2026-11-17 10:01:00|2026-11-18 11:32:48.422|
+[info] |evt-1011|post-502|user-111|LIKE      |2026-11-17 10:01:05|0    |1    |0       |2026-11-17 10:01:05|2026-11-18 11:32:48.422|
+[info] |evt-1012|post-505|user-112|COMMENT   |2026-11-17 10:01:10|0    |0    |1       |2026-11-17 10:01:10|2026-11-18 11:32:48.422|
+[info] +--------+--------+--------+----------+-------------------+-----+-----+--------+-------------------+-----------------------+
+[info] TOTAL EVENT COUNT: 20
+[success] Total time: 19 s, completed 18-Nov-2026, 11:33:44 am
+PS C:\Users\manee\OneDrive\Documents\scala-intllij\kafka-iceberg-social-media-assignment> sbt "runMain com.demo.AnalyzePostEngagement"
+[info] welcome to sbt 1.10.7 (Eclipse Adoptium Java 17.0.21)
+[info] loading project definition from C:\Users\manee\OneDrive\Documents\scala-intllij\kafka-iceberg-social-media-assignment\project
+[info] loading settings for project root from build.sbt...
+[info] set current project to kafka-iceberg-social-media-assignment (in build file:/C:/Users/manee/OneDrive/Documents/scala-intllij/kafka-iceberg-social-media-assignment/)
+[info] running (fork) com.demo.AnalyzePostEngagement
+[error] Using Spark's default log4j profile: org/apache/spark/log4j2-defaults.properties
+[error] 26/11/18 11:34:03 INFO SparkContext: Running Spark version 3.5.9
+[error] 26/11/18 11:34:03 INFO SparkContext: OS info Windows 11, 10.0, amd64
+[error] 26/11/18 11:34:03 INFO SparkContext: Java version 17.0.21
+[error] 26/11/18 11:34:03 INFO ResourceUtils: ==============================================================
+[error] 26/11/18 11:34:03 INFO ResourceUtils: No custom resources configured for spark.driver.
+[error] 26/11/18 11:34:03 INFO ResourceUtils: ==============================================================
+[error] 26/11/18 11:34:03 INFO SparkContext: Submitted application: AnalyzePostEngagement
+[error] 26/11/18 11:34:03 INFO ResourceProfile: Default ResourceProfile created, executor resources: Map(cores -> name: cores, amount: 1, script: , vendor: , memory -> name: memory, amount: 1024, script: , vendor: , offHeap -> name: offHeap, amount: 0, script: , vendor: ), task resources: Map(cpus -> name: cpus, amount: 1.0)
+[error] 26/11/18 11:34:03 INFO ResourceProfile: Limiting resource is cpu
+[error] 26/11/18 11:34:03 INFO ResourceProfileManager: Added ResourceProfile id: 0
+[error] 26/11/18 11:34:03 INFO SecurityManager: Changing view acls to: manee
+[error] 26/11/18 11:34:03 INFO SecurityManager: Changing modify acls to: manee
+[error] 26/11/18 11:34:04 INFO SecurityManager: Changing view acls groups to:
+[error] 26/11/18 11:34:04 INFO SecurityManager: Changing modify acls groups to:
+[error] 26/11/18 11:34:04 INFO SecurityManager: SecurityManager: authentication disabled; ui acls disabled; users with view permissions: manee; groups with view permissions: EMPTY; users with modify permissions: manee; groups with modify permissions: EMPTY
+[error] 26/11/18 11:34:04 INFO Utils: Successfully started service 'sparkDriver' on port 49407.
+[error] 26/11/18 11:34:04 INFO SparkEnv: Registering MapOutputTracker
+[error] 26/11/18 11:34:04 INFO SparkEnv: Registering BlockManagerMaster
+[error] 26/11/18 11:34:04 INFO BlockManagerMasterEndpoint: Using org.apache.spark.storage.DefaultTopologyMapper for getting topology information
+[error] 26/11/18 11:34:04 INFO BlockManagerMasterEndpoint: BlockManagerMasterEndpoint up
+[error] 26/11/18 11:34:04 INFO SparkEnv: Registering BlockManagerMasterHeartbeat
+[error] 26/11/18 11:34:04 INFO DiskBlockManager: Created local directory at C:\Users\manee\AppData\Local\Temp\blockmgr-4e45e0c4-5096-42f7-9f2a-1d95c1e71b52
+[error] 26/11/18 11:34:05 INFO MemoryStore: MemoryStore started with capacity 2.2 GiB
+[error] 26/11/18 11:34:05 INFO SparkEnv: Registering OutputCommitCoordinator
+[error] 26/11/18 11:34:05 INFO JettyUtils: Start Jetty 0.0.0.0:4040 for SparkUI
+[error] 26/11/18 11:34:05 INFO Utils: Successfully started service 'SparkUI' on port 4040.
+[error] 26/11/18 11:34:05 INFO Executor: Starting executor ID driver on host Maneendra
+[error] 26/11/18 11:34:05 INFO Executor: OS info Windows 11, 10.0, amd64
+[error] 26/11/18 11:34:05 INFO Executor: Java version 17.0.21
+[error] 26/11/18 11:34:05 INFO Executor: Starting executor with user classpath (userClassPathFirst = false): ''
+[error] 26/11/18 11:34:05 INFO Executor: Created or updated repl class loader org.apache.spark.util.MutableURLClassLoader@7d3c09ec for default.
+[error] 26/11/18 11:34:05 INFO Utils: Successfully started service 'org.apache.spark.network.netty.NettyBlockTransferService' on port 49666.
+[error] 26/11/18 11:34:05 INFO NettyBlockTransferService: Server created on Maneendra:49666
+[error] 26/11/18 11:34:05 INFO BlockManager: Using org.apache.spark.storage.RandomBlockReplicationPolicy for block replication polic
+[error] 26/11/18 11:34:05 INFO BlockManagerMaster: Registering BlockManager BlockManagerId(driver, Maneendra, 49666, None)
+[error] 26/11/18 11:34:05 INFO BlockManagerMasterEndpoint: Registering block manager Maneendra:49666 with 2.2 GiB RAM, BlockManagerId(driver, Maneendra, 49666, None)
+[error] 26/11/18 11:34:05 INFO BlockManagerMaster: Registered BlockManager BlockManagerId(driver, Maneendra, 49666, None)
+[error] 26/11/18 11:34:05 INFO BlockManager: Initialized BlockManager: BlockManagerId(driver, Maneendra, 49666, None)
+[info] TOTAL ROWS: 20
+[info] DISTINCT EVENT IDS: 12
+[info] POST-WISE ENGAGEMENT:
+[info] +--------+-----------+-----------+--------------+
+[info] |post_id |total_views|total_likes|total_comments|
+[info] +--------+-----------+-----------+--------------+
+[info] |post-501|5          |4          |0             |
+[info] |post-502|2          |1          |2             |
+[info] |post-503|0          |2          |2             |
+[info] |post-504|1          |0          |0             |
+[info] |post-505|0          |0          |1             |
+[info] +--------+-----------+-----------+--------------+
+[info] POSTS RANKED BY TOTAL ENGAGEMENT:
+[info] +--------+-----------+-----------+--------------+----------------+
+[info] |post_id |total_views|total_likes|total_comments|total_engagement|
+[info] +--------+-----------+-----------+--------------+----------------+
+[info] |post-501|5          |4          |0             |9               |
+[info] |post-502|2          |1          |2             |5               |
+[info] |post-503|0          |2          |2             |4               |
+[info] |post-504|1          |0          |0             |1               |
+[info] |post-505|0          |0          |1             |1               |
+[info] +--------+-----------+-----------+--------------+----------------+
+[success] Total time: 21 s, completed 18-Nov-2026, 11:34:18 am
+PS C:\Users\manee\OneDrive\Documents\scala-intllij\kafka-iceberg-social-media-assignment>
